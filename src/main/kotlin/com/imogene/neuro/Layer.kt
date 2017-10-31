@@ -11,6 +11,12 @@ class Layer(internal val neurons: Array<Neuron>) {
                 transferFunction: TransferFunction = transferFunctionLogistic())
             : this(size = size, layerInitializer = { Neuron(aggregationFunction, transferFunction) })
 
+    init {
+        if(neurons.isEmpty()){
+            throw IllegalArgumentException("The layer mast not be empty")
+        }
+    }
+
     var memory : LayerMemory
         get() {
             return LayerMemory(size){

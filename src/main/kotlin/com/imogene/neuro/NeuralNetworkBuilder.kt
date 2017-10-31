@@ -2,38 +2,23 @@ package com.imogene.neuro
 
 interface InputLayerBuilder{
 
-    fun setTaskTemplate(taskTemplate: TaskTemplate) : HiddenPartBuilder
+    fun buildInputLayer(taskTemplate: TaskTemplate,
+                        transferFunction: TransferFunction = transferFunctionEmpty()) : LayersBuilder
 }
 
-class TaskTemplate{
+interface LayersBuilder {
 
-    fun addDoubleVariable() : TaskTemplate {
-        return this
-    }
-
-    fun <T> addVariable() : TaskTemplate {
-        return this
-    }
-
-    internal fun createInputLayer() : Layer {
-        return Layer(1)
-    }
-}
-
-interface HiddenPartBuilder{
-
-    fun addHiddenLayer(layer: Layer) : HiddenPartBuilder
+    fun addHiddenLayer(layer: Layer) : LayersBuilder
 
     fun addHiddenLayer(size: Int,
                        aggregationFunction: AggregationFunction,
-                       transferFunction: TransferFunction) : HiddenPartBuilder
-
-    fun buildOutputLayer() : OutputLayerBuilder
-}
-
-interface OutputLayerBuilder{
+                       transferFunction: TransferFunction) : LayersBuilder
 
     fun setOutputLayer(layer: Layer) : Finish
+
+    fun setOutputLayer(size: Int,
+                       aggregationFunction: AggregationFunction,
+                       transferFunction: TransferFunction) : Finish
 }
 
 interface Finish{
@@ -41,31 +26,36 @@ interface Finish{
     fun build() : NeuralNetwork
 }
 
-internal class NeuralNetworkBuilder : InputLayerBuilder, HiddenPartBuilder, OutputLayerBuilder, Finish{
+internal class NeuralNetworkBuilder : InputLayerBuilder, LayersBuilder, Finish {
 
     private val layers = mutableListOf<Layer>()
 
-    override fun setTaskTemplate(taskTemplate: TaskTemplate): HiddenPartBuilder {
-        layers.add(taskTemplate.createInputLayer())
+    override fun buildInputLayer(taskTemplate: TaskTemplate,
+                                 transferFunction: TransferFunction): LayersBuilder {
+        layers.add(taskTemplate.createInputLayer(transferFunction))
         return this
     }
 
-    override fun addHiddenLayer(layer: Layer): HiddenPartBuilder {
+    override fun addHiddenLayer(layer: Layer): LayersBuilder {
         layers.add(layer)
         return this
     }
 
     override fun addHiddenLayer(size: Int,
                                 aggregationFunction: AggregationFunction,
-                                transferFunction: TransferFunction): HiddenPartBuilder {
+                                transferFunction: TransferFunction): LayersBuilder {
         return addHiddenLayer(Layer(size, aggregationFunction, transferFunction))
     }
-
-    override fun buildOutputLayer() = this
 
     override fun setOutputLayer(layer: Layer): Finish {
         layers.add(layer)
         return this
+    }
+
+    override fun setOutputLayer(size: Int,
+                                aggregationFunction: AggregationFunction,
+                                transferFunction: TransferFunction) : Finish {
+        return setOutputLayer(Layer(size, aggregationFunction, transferFunction))
     }
 
     override fun build() = NeuralNetwork(layers.toTypedArray())
