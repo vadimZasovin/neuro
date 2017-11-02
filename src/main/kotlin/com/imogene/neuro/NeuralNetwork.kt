@@ -83,11 +83,29 @@ class NeuralNetwork(private val layers: Array<Layer>){
     fun getNeuronAt(layerIndex: Int, neuronIndex: Int) = layers[layerIndex].neurons[neuronIndex]
 
     fun solve(inputs: DoubleArray) : DoubleArray {
-        var result = inputs
-        layers.forEach {
-            result = it.signal(result)
+        val size = inputs.size
+        if(size != inputLayer.size){
+            throw IllegalArgumentException("The size of the inputs array ($size) is not equal " +
+                    "to the size of the input layer (${inputLayer.size}).")
         }
+        var result = DoubleArray(size){
+            val neuron = inputLayer.getNeuronAt(it)
+            val input = inputs[it]
+            neuron.signal(doubleArrayOf(input))
+        }
+        (1 until this.size)
+                .asSequence()
+                .map { getLayerAt(it) }
+                .forEach { result = it.signal(result) }
         return result
+    }
+
+    internal var normalizers : Map<MutableRange, Normalizer<*>>? = null
+
+    fun newTask() = Task(normalizers)
+
+    fun solve(task: Task) : DoubleArray {
+        return solve(task.inputs)
     }
 
     companion object {

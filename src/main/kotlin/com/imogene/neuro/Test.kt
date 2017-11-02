@@ -1,40 +1,36 @@
 package com.imogene.neuro
 
+import java.util.*
+
+data class CustomVariable(private val value: Int)
+
 fun main(args: Array<String>){
-    println(transferFunctionLogistic()(-0.1))
-    println(inputNeuron().signal(doubleArrayOf(0.354)))
+    val taskTemplate = TaskTemplate()
+            .addVariable()
+            .addVariables(9)
+            .addVariable(object : Normalizer<CustomVariable>{
+                override fun normalize(value: CustomVariable) = 1.0
+            })
+            .addVariables(2, object : Normalizer<CustomVariable>{
+                override fun normalize(value: CustomVariable) = -1.0
+            })
 
-    val layer = Layer(10)
-    layer.memory = LayerMemory(10){
-        NeuronMemory(4){
-            1.0
-        }
-    }
+    val net = NeuralNetwork.startBuilding()
+            .buildInputLayer(taskTemplate)
+            .addHiddenLayer(Layer(6))
+            .addHiddenLayer(Layer(8))
+            .setOutputLayer(Layer(4))
+            .build()
 
-    println("initial layer memory:")
-    layer.memory.forEach{
-        it.forEach(::print)
-        println()
-    }
+    val task = net.newTask()
+            .addVariable(5)
+            .addVariable(199)
+            .addVariables(45.8, 34.7, 67.9, 13.09, 34.9, 89.008, 19.8, 44.9)
+            .addVariable(CustomVariable(89))
+            .addVariables(CustomVariable(13), CustomVariable(12))
 
-    layer.updateMemory { neuronIndex, _ ->
-        if(neuronIndex % 2 == 0){
-            0.3
-        }else{
-            0.2
-        }
-    }
-
-    println()
-    println()
-
-    println("updated layer memory:")
-    layer.memory.forEach{
-        it.forEach(::print)
-        println()
-    }
-
-    //layer.signal(doubleArrayOf(1.0, 0.4, 0.3, 0.2)).forEach(::println)
-
-    IntRange
+    net.prepareMemory()
+    val r = Random()
+    net.updateMemory { _, _, _ -> r.nextDouble() }
+    net.solve(task).forEach { println(it) }
 }

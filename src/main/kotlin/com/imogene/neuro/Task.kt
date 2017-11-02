@@ -4,7 +4,7 @@ class TaskTemplate{
 
     private var neuronsCounter = 0
 
-    private val normalizers = mutableMapOf<MutableRange, Normalizer<*>>()
+    internal val normalizers = mutableMapOf<MutableRange, Normalizer<*>>()
 
     fun addVariable() : TaskTemplate {
         neuronsCounter++
@@ -30,23 +30,175 @@ class TaskTemplate{
     }
 
     internal fun createInputLayer(transferFunction: TransferFunction) : Layer {
-        return Layer(neuronsCounter, layerInitializer = { Neuron(aggregationFunctionSum(), transferFunction) })
+        return Layer(neuronsCounter, layerInitializer = {
+            Neuron(aggregationFunctionSum(), transferFunction, 1, {1.0})
+        })
     }
 }
 
-class Task internal constructor(private val normalizers: Map<IntRange, Normalizer<*>>){
+class Task internal constructor(private val normalizers: Map<MutableRange, Normalizer<*>>?){
 
-    val inputs = mutableListOf<Double>()
+    private val _inputs = mutableListOf<Double>()
 
     fun addVariable(value: Double) : Task {
+        val normalized : Double
+        val normalizer = findNormalizer<Double>()
+        normalized = normalizer?.normalize(value) ?: value.normalize()
+        _inputs.add(normalized)
         return this
     }
 
     fun addVariables(vararg values: Double) : Task {
+        val count = values.size
+        val normalizer = findNormalizer<Double>(count)
+        values.forEach {
+            val normalized = normalizer?.normalize(it) ?: it.normalize()
+            _inputs.add(normalized)
+        }
         return this
     }
 
-    fun addVariable(value: Any) : Task {
+    fun addVariable(value: Float) : Task {
+        val normalized : Double
+        val normalizer = findNormalizer<Float>()
+        normalized = normalizer?.normalize(value) ?: value.normalize()
+        _inputs.add(normalized)
         return this
     }
+
+    fun addVariables(vararg values: Float) : Task {
+        val count = values.size
+        val normalizer = findNormalizer<Float>(count)
+        values.forEach {
+            val normalized = normalizer?.normalize(it) ?: it.normalize()
+            _inputs.add(normalized)
+        }
+        return this
+    }
+
+    fun addVariable(value: Long) : Task {
+        val normalized : Double
+        val normalizer = findNormalizer<Long>()
+        normalized = normalizer?.normalize(value) ?: value.normalize()
+        _inputs.add(normalized)
+        return this
+    }
+
+    fun addVariables(vararg values: Long) : Task {
+        val count = values.size
+        val normalizer = findNormalizer<Long>(count)
+        values.forEach {
+            val normalized = normalizer?.normalize(it) ?: it.normalize()
+            _inputs.add(normalized)
+        }
+        return this
+    }
+
+    fun addVariable(value: Int) : Task {
+        val normalized : Double
+        val normalizer = findNormalizer<Int>()
+        normalized = normalizer?.normalize(value) ?: value.normalize()
+        _inputs.add(normalized)
+        return this
+    }
+
+    fun addVariables(vararg values: Int) : Task {
+        val count = values.size
+        val normalizer = findNormalizer<Int>(count)
+        values.forEach {
+            val normalized = normalizer?.normalize(it) ?: it.normalize()
+            _inputs.add(normalized)
+        }
+        return this
+    }
+
+    fun addVariable(value: Short) : Task {
+        val normalized : Double
+        val normalizer = findNormalizer<Short>()
+        normalized = normalizer?.normalize(value) ?: value.normalize()
+        _inputs.add(normalized)
+        return this
+    }
+
+    fun addVariables(vararg values: Short) : Task {
+        val count = values.size
+        val normalizer = findNormalizer<Short>(count)
+        values.forEach {
+            val normalized = normalizer?.normalize(it) ?: it.normalize()
+            _inputs.add(normalized)
+        }
+        return this
+    }
+
+    fun addVariable(value: Byte) : Task {
+        val normalized : Double
+        val normalizer = findNormalizer<Byte>()
+        normalized = normalizer?.normalize(value) ?: value.normalize()
+        _inputs.add(normalized)
+        return this
+    }
+
+    fun addVariables(vararg values: Byte) : Task {
+        val count = values.size
+        val normalizer = findNormalizer<Byte>(count)
+        values.forEach {
+            val normalized = normalizer?.normalize(it) ?: it.normalize()
+            _inputs.add(normalized)
+        }
+        return this
+    }
+
+    fun <T> addVariable(value: T) : Task {
+        val normalizer = getNormalizer<T>()
+        val normalized = normalizer.normalize(value)
+        _inputs.add(normalized)
+        return this
+    }
+
+    fun <T> addVariables(vararg values: T) : Task {
+        val count = values.size
+        val normalizer = getNormalizer<T>(count)
+        values.forEach {
+            val normalized = normalizer.normalize(it)
+            _inputs.add(normalized)
+        }
+        return this
+    }
+
+    private fun <T> findNormalizer(rangeSize: Int = 1) : Normalizer<T>? {
+        if(normalizers == null){
+            throw IllegalStateException("Normalizers are not specified")
+        }
+        val range = getCurrentRange(rangeSize)
+        return try {
+            @Suppress("UNCHECKED_CAST")
+            normalizers[range] as Normalizer<T>?
+        }catch (e: ClassCastException){
+            throw IllegalStateException("Normalizer at position $position has inappropriate type argument.", e)
+        }
+    }
+
+    private fun <T> getNormalizer(rangeSize: Int = 1) : Normalizer<T> {
+        return try {
+            findNormalizer(rangeSize)!!
+        }catch (e: NullPointerException){
+            throw IllegalStateException("Normalizer at position $position is not found.", e)
+        }
+    }
+
+    private val position
+        get() = _inputs.size
+
+    private fun getCurrentRange(size: Int) : MutableRange {
+        range.first = position
+        range.last = position + size
+        return range
+    }
+
+    private val range by lazy(LazyThreadSafetyMode.NONE) {
+        MutableRange(0, 0)
+    }
+
+    internal val inputs
+        get() = _inputs.toDoubleArray()
 }

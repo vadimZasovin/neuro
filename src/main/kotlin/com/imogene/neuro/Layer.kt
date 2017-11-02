@@ -67,6 +67,8 @@ class Layer(internal val neurons: Array<Neuron>) {
     val size
         get() = neurons.size
 
+    fun getNeuronAt(index: Int) = neurons[index]
+
     fun signal(inputs: DoubleArray) : DoubleArray{
         return DoubleArray(size){
             val neuron = neurons[it]
