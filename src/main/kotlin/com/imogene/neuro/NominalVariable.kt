@@ -14,7 +14,7 @@ internal class NominalVariable<in T>(private vararg val values: T) {
     fun indexOf(value: T) : Int {
         val result = values.indexOf(value)
         if(result == -1){
-            throw IllegalArgumentException("This NominalVariable does not include specified value.")
+            throw IllegalArgumentException("The specified value is not found in possible values of nominal variable.")
         }
         return result
     }
