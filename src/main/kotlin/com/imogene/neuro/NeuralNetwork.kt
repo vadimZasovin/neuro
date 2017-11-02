@@ -102,7 +102,9 @@ class NeuralNetwork(private val layers: Array<Layer>){
 
     internal var normalizers : Map<MutableRange, Normalizer<*>>? = null
 
-    fun newTask() = Task(normalizers)
+    internal var nominalVariables : Map<Int, NominalVariable<*>>? = null
+
+    fun newTask() = Task(normalizers, nominalVariables)
 
     fun solve(task: Task) : DoubleArray {
         return solve(task.inputs)

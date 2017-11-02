@@ -6,6 +6,8 @@ class TaskTemplate{
 
     internal val normalizers = mutableMapOf<MutableRange, Normalizer<*>>()
 
+    internal val nominalVariables = mutableMapOf<Int, NominalVariable<*>>()
+
     fun addVariable() : TaskTemplate {
         neuronsCounter++
         return this
@@ -29,6 +31,13 @@ class TaskTemplate{
         return this
     }
 
+    fun <T> addNominalVariable(vararg possibleValues: T) : TaskTemplate {
+        val variable = NominalVariable(*possibleValues)
+        nominalVariables.put(neuronsCounter, variable)
+        neuronsCounter += variable.size
+        return this
+    }
+
     internal fun createInputLayer(transferFunction: TransferFunction) : Layer {
         return Layer(neuronsCounter, layerInitializer = {
             Neuron(aggregationFunctionSum(), transferFunction, 1, {1.0})
@@ -36,7 +45,9 @@ class TaskTemplate{
     }
 }
 
-class Task internal constructor(private val normalizers: Map<MutableRange, Normalizer<*>>?){
+class Task internal constructor(
+        private val normalizers: Map<MutableRange, Normalizer<*>>?,
+        private val nominalVariables: Map<Int, NominalVariable<*>>?){
 
     private val _inputs = mutableListOf<Double>()
 
@@ -165,9 +176,17 @@ class Task internal constructor(private val normalizers: Map<MutableRange, Norma
         return this
     }
 
+    fun <T> addNominalVariable(value: T) : Task {
+        val variable = getNominalVariableDefinition<T>()
+        val size = variable.size
+        val index = variable.indexOf(value)
+        (0 until size).mapTo(_inputs) { if(it == index) 1.0 else 0.0 }
+        return this
+    }
+
     private fun <T> findNormalizer(rangeSize: Int = 1) : Normalizer<T>? {
         if(normalizers == null){
-            throw IllegalStateException("Normalizers are not specified")
+            throw IllegalStateException("Normalizers are not specified.")
         }
         val range = getCurrentRange(rangeSize)
         return try {
@@ -183,6 +202,20 @@ class Task internal constructor(private val normalizers: Map<MutableRange, Norma
             findNormalizer(rangeSize)!!
         }catch (e: NullPointerException){
             throw IllegalStateException("Normalizer at position $position is not found.", e)
+        }
+    }
+
+    private fun <T> getNominalVariableDefinition() : NominalVariable<T> {
+        if(nominalVariables == null){
+            throw IllegalStateException("Nominal variables are not specified.")
+        }
+        return try {
+            @Suppress("UNCHECKED_CAST")
+            nominalVariables[position] as NominalVariable<T>
+        }catch (e: ClassCastException){
+            throw IllegalStateException("Nominal variable at position $position has inappropriate type.", e)
+        }catch (e: NullPointerException){
+            throw IllegalStateException("Nominal variable at position $position is not found.", e)
         }
     }
 

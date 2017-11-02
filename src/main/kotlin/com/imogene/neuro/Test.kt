@@ -14,6 +14,7 @@ fun main(args: Array<String>){
             .addVariables(2, object : Normalizer<CustomVariable>{
                 override fun normalize(value: CustomVariable) = -1.0
             })
+            .addNominalVariable("first", "second", "third")
 
     val net = NeuralNetwork.startBuilding()
             .buildInputLayer(taskTemplate)
@@ -28,6 +29,7 @@ fun main(args: Array<String>){
             .addVariables(45.8, 34.7, 67.9, 13.09, 34.9, 89.008, 19.8, 44.9)
             .addVariable(CustomVariable(89))
             .addVariables(CustomVariable(13), CustomVariable(12))
+            .addNominalVariable("first")
 
     net.prepareMemory()
     val r = Random()

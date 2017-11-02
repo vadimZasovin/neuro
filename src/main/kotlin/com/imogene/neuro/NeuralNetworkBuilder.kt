@@ -32,10 +32,13 @@ internal class NeuralNetworkBuilder : InputLayerBuilder, LayersBuilder, Finish {
 
     private var normalizers : Map<MutableRange, Normalizer<*>>? = null
 
+    private var nominalVariables: Map<Int, NominalVariable<*>>? = null
+
     override fun buildInputLayer(taskTemplate: TaskTemplate,
                                  transferFunction: TransferFunction): LayersBuilder {
         layers.add(taskTemplate.createInputLayer(transferFunction))
         normalizers = taskTemplate.normalizers
+        nominalVariables = taskTemplate.nominalVariables
         return this
     }
 
@@ -64,6 +67,7 @@ internal class NeuralNetworkBuilder : InputLayerBuilder, LayersBuilder, Finish {
     override fun build() : NeuralNetwork {
         val net = NeuralNetwork(layers.toTypedArray())
         net.normalizers = normalizers
+        net.nominalVariables = nominalVariables
         return net
     }
 }
