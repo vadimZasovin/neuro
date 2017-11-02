@@ -11,3 +11,5 @@ fun Int.normalize() = toDouble().normalize()
 fun Short.normalize() = toDouble().normalize()
 
 fun Byte.normalize() = toDouble().normalize()
+
+fun Boolean.normalize() = if(this) 1.0 else 0.0

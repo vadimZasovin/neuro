@@ -62,10 +62,7 @@ class Task internal constructor(
     fun addVariables(vararg values: Double) : Task {
         val count = values.size
         val normalizer = findNormalizer<Double>(count)
-        values.forEach {
-            val normalized = normalizer?.normalize(it) ?: it.normalize()
-            _inputs.add(normalized)
-        }
+        values.mapTo(_inputs){ normalizer?.normalize(it) ?: it.normalize() }
         return this
     }
 
@@ -80,10 +77,7 @@ class Task internal constructor(
     fun addVariables(vararg values: Float) : Task {
         val count = values.size
         val normalizer = findNormalizer<Float>(count)
-        values.forEach {
-            val normalized = normalizer?.normalize(it) ?: it.normalize()
-            _inputs.add(normalized)
-        }
+        values.mapTo(_inputs){ normalizer?.normalize(it) ?: it.normalize() }
         return this
     }
 
@@ -98,10 +92,7 @@ class Task internal constructor(
     fun addVariables(vararg values: Long) : Task {
         val count = values.size
         val normalizer = findNormalizer<Long>(count)
-        values.forEach {
-            val normalized = normalizer?.normalize(it) ?: it.normalize()
-            _inputs.add(normalized)
-        }
+        values.mapTo(_inputs){ normalizer?.normalize(it) ?: it.normalize() }
         return this
     }
 
@@ -116,10 +107,7 @@ class Task internal constructor(
     fun addVariables(vararg values: Int) : Task {
         val count = values.size
         val normalizer = findNormalizer<Int>(count)
-        values.forEach {
-            val normalized = normalizer?.normalize(it) ?: it.normalize()
-            _inputs.add(normalized)
-        }
+        values.mapTo(_inputs){ normalizer?.normalize(it) ?: it.normalize() }
         return this
     }
 
@@ -134,10 +122,7 @@ class Task internal constructor(
     fun addVariables(vararg values: Short) : Task {
         val count = values.size
         val normalizer = findNormalizer<Short>(count)
-        values.forEach {
-            val normalized = normalizer?.normalize(it) ?: it.normalize()
-            _inputs.add(normalized)
-        }
+        values.mapTo(_inputs){ normalizer?.normalize(it) ?: it.normalize() }
         return this
     }
 
@@ -152,10 +137,22 @@ class Task internal constructor(
     fun addVariables(vararg values: Byte) : Task {
         val count = values.size
         val normalizer = findNormalizer<Byte>(count)
-        values.forEach {
-            val normalized = normalizer?.normalize(it) ?: it.normalize()
-            _inputs.add(normalized)
-        }
+        values.mapTo(_inputs){ normalizer?.normalize(it) ?: it.normalize() }
+        return this
+    }
+
+    fun addVariable(value: Boolean) : Task {
+        val normalized : Double
+        val normalizer = findNormalizer<Boolean>()
+        normalized = normalizer?.normalize(value) ?: value.normalize()
+        _inputs.add(normalized)
+        return this
+    }
+
+    fun addVariables(vararg values: Boolean) : Task {
+        val count = values.size
+        val normalizer = findNormalizer<Boolean>(count)
+        values.mapTo(_inputs){ normalizer?.normalize(it) ?: it.normalize() }
         return this
     }
 
@@ -169,10 +166,7 @@ class Task internal constructor(
     fun <T> addVariables(vararg values: T) : Task {
         val count = values.size
         val normalizer = getNormalizer<T>(count)
-        values.forEach {
-            val normalized = normalizer.normalize(it)
-            _inputs.add(normalized)
-        }
+        values.mapTo(_inputs){ normalizer.normalize(it) }
         return this
     }
 
