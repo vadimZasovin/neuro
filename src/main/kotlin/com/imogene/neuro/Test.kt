@@ -14,7 +14,7 @@ fun main(args: Array<String>){
             .addVariables(2, object : Normalizer<CustomVariable>{
                 override fun normalize(value: CustomVariable) = -1.0
             })
-            .addNominalVariable("first", "second", "third")
+            .addNominalVariable("first", "second")
             .addVariable()
 
     val net = NeuralNetwork.startBuilding()

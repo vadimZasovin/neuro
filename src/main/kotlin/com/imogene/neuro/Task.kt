@@ -34,7 +34,8 @@ class TaskTemplate{
     fun <T> addNominalVariable(vararg possibleValues: T) : TaskTemplate {
         val variable = NominalVariable(*possibleValues)
         nominalVariables.put(neuronsCounter, variable)
-        neuronsCounter += variable.size
+        val size = if(variable.size == 2) 1 else variable.size
+        neuronsCounter += size
         return this
     }
 
@@ -174,7 +175,11 @@ class Task internal constructor(
         val variable = getNominalVariableDefinition<T>()
         val size = variable.size
         val index = variable.indexOf(value)
-        (0 until size).mapTo(_inputs) { if(it == index) 1.0 else 0.0 }
+        if(size == 2){
+            _inputs.add(index.toDouble())
+        }else{
+            (0 until size).mapTo(_inputs) { if(it == index) 1.0 else 0.0 }
+        }
         return this
     }
 
@@ -183,12 +188,8 @@ class Task internal constructor(
             throw IllegalStateException("Normalizers are not specified.")
         }
         val range = getCurrentRange(rangeSize)
-        return try {
-            @Suppress("UNCHECKED_CAST")
-            normalizers[range] as Normalizer<T>?
-        }catch (e: ClassCastException){
-            throw IllegalStateException("Normalizer at position $position has inappropriate type argument.", e)
-        }
+        @Suppress("UNCHECKED_CAST")
+        return normalizers[range] as Normalizer<T>?
     }
 
     private fun <T> getNormalizer(rangeSize: Int = 1) : Normalizer<T> {
@@ -206,8 +207,6 @@ class Task internal constructor(
         return try {
             @Suppress("UNCHECKED_CAST")
             nominalVariables[position] as NominalVariable<T>
-        }catch (e: ClassCastException){
-            throw IllegalStateException("Nominal variable at position $position has inappropriate type.", e)
         }catch (e: NullPointerException){
             throw IllegalStateException("Nominal variable at position $position is not found.", e)
         }
