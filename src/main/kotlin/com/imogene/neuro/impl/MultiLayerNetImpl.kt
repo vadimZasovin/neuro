@@ -3,7 +3,7 @@ package com.imogene.neuro.impl
 import com.imogene.neuro.*
 
 internal class MultiLayerNetImpl(layers: Array<LayerStructure>) :
-        BaseMultiLayerStructure(layers), MultiLayerTaskSolverNet{
+        MultiLayerStructureImpl(layers), MultiLayerTaskSolverNet{
 
     override fun solve(inputs: DoubleArray) : DoubleArray {
         val size = inputs.size

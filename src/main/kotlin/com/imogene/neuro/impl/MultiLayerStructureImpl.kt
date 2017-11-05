@@ -2,7 +2,7 @@ package com.imogene.neuro.impl
 
 import com.imogene.neuro.*
 
-internal abstract class BaseMultiLayerStructure(final override val layers: Array<LayerStructure>) : MultiLayerStructure{
+internal open class MultiLayerStructureImpl(final override val layers: Array<LayerStructure>) : MultiLayerStructure {
 
     init {
         if(layersCount < 2){

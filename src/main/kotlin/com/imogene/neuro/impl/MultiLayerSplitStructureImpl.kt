@@ -2,7 +2,7 @@ package com.imogene.neuro.impl
 
 import com.imogene.neuro.*
 
-internal abstract class BaseMultiLayerSplitStructure(final override val structures: Array<MultiLayerStructure>)
+internal open class MultiLayerSplitStructureImpl(final override val structures: Array<MultiLayerStructure>)
     : MultiLayerSplitStructure {
 
     init {
