@@ -1,7 +1,5 @@
 package com.imogene.neuro
 
-typealias NeuronMemory = DoubleArray
-
 class Neuron(private val aggregationFunction: AggregationFunction = aggregationFunctionSum(),
              private val transferFunction: TransferFunction = transferFunctionLogistic()){
 
@@ -25,7 +23,7 @@ class Neuron(private val aggregationFunction: AggregationFunction = aggregationF
         }
 
 
-    var bias = 0.0
+    var bias : Bias = 0.0
 
     fun signal(inputs: DoubleArray) : Double{
         if(inputs.size != memory.size){

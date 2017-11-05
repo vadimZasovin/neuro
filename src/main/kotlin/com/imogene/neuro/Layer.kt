@@ -1,8 +1,6 @@
 package com.imogene.neuro
 
-typealias LayerMemory = Array<NeuronMemory>
-
-class Layer(internal val neurons: Array<Neuron>) {
+class Layer(override val neurons: Array<Neuron>) : LayerStructure {
 
     constructor(size: Int, layerInitializer: (Int) -> Neuron) : this(Array(size, layerInitializer))
 
@@ -17,7 +15,7 @@ class Layer(internal val neurons: Array<Neuron>) {
         }
     }
 
-    var memory : LayerMemory
+    override var memory : LayerMemory
         get() {
             return LayerMemory(size){
                 neurons[it].memory
@@ -33,22 +31,7 @@ class Layer(internal val neurons: Array<Neuron>) {
             }
         }
 
-    fun updateMemory(update: (neuronIndex: Int, memoryIndex: Int) -> Double){
-        neurons.forEachIndexed { neuronIndex, neuron ->
-            val neuronMemory = neuron.memory
-            neuronMemory.forEachIndexed { memoryIndex, _ ->
-                neuronMemory[memoryIndex] = update(neuronIndex, memoryIndex)
-            }
-        }
-    }
-
-    internal fun prepareMemory(size: Int){
-        memory = LayerMemory(this.size){
-            NeuronMemory(size)
-        }
-    }
-
-    var biases : DoubleArray
+    override var biases : DoubleArray
         get() {
             return DoubleArray(size){
                 neurons[it].bias
@@ -64,12 +47,9 @@ class Layer(internal val neurons: Array<Neuron>) {
             }
         }
 
-    val size
-        get() = neurons.size
+    override val size get() = neurons.size
 
-    fun getNeuronAt(index: Int) = neurons[index]
-
-    fun signal(inputs: DoubleArray) : DoubleArray{
+    override fun signal(inputs: DoubleArray) : DoubleArray{
         return DoubleArray(size){
             val neuron = neurons[it]
             neuron.signal(inputs)

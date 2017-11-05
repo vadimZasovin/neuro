@@ -1,5 +1,7 @@
 package com.imogene.neuro
 
+import com.imogene.neuro.impl.MultiLayerNetImpl
+
 interface InputLayerBuilder{
 
     fun buildInputLayer(taskTemplate: TaskTemplate,
@@ -23,7 +25,7 @@ interface LayersBuilder {
 
 interface Finish{
 
-    fun build() : NeuralNetwork
+    fun build() : MultiLayerTaskSolverNet
 }
 
 internal class NeuralNetworkBuilder : InputLayerBuilder, LayersBuilder, Finish {
@@ -64,8 +66,8 @@ internal class NeuralNetworkBuilder : InputLayerBuilder, LayersBuilder, Finish {
         return setOutputLayer(Layer(size, aggregationFunction, transferFunction))
     }
 
-    override fun build() : NeuralNetwork {
-        val net = NeuralNetwork(layers.toTypedArray())
+    override fun build() : MultiLayerNetImpl {
+        val net = MultiLayerNetImpl(layers.toTypedArray())
         net.normalizers = normalizers
         net.nominalVariables = nominalVariables
         return net

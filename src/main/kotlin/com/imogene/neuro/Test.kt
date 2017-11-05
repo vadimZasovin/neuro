@@ -1,5 +1,6 @@
 package com.imogene.neuro
 
+import com.imogene.neuro.impl.MultiLayerNetImpl
 import java.util.*
 
 data class CustomVariable(private val value: Int)
@@ -17,7 +18,7 @@ fun main(args: Array<String>){
             .addNominalVariable("first", "second")
             .addVariable()
 
-    val net = NeuralNetwork.startBuilding()
+    val net = MultiLayerNetImpl.startBuilding()
             .buildInputLayer(taskTemplate)
             .addHiddenLayer(Layer(6))
             .addHiddenLayer(Layer(8))
@@ -34,7 +35,5 @@ fun main(args: Array<String>){
             .addVariable(true)
 
     net.prepareMemory()
-    val r = Random()
-    net.updateMemory { _, _, _ -> r.nextDouble() }
     net.solve(task).forEach { println(it) }
 }

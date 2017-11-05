@@ -1,6 +1,6 @@
 package com.imogene.neuro
 
-typealias AggregationFunction = (inputs: DoubleArray, memory: NeuronMemory, bias: Double) -> Double
+typealias AggregationFunction = (inputs: DoubleArray, memory: NeuronMemory, bias: Bias) -> Double
 
 fun aggregationFunctionSum() : AggregationFunction = { inputs, memory, bias ->
     var result = 0.0
