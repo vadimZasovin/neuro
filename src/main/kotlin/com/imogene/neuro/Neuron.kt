@@ -1,7 +1,7 @@
 package com.imogene.neuro
 
-class Neuron(private val aggregationFunction: AggregationFunction = aggregationFunctionSum(),
-             private val transferFunction: TransferFunction = transferFunctionLogistic()){
+class Neuron(val aggregationFunction: AggregationFunction = aggregationFunctionSum(),
+             val transferFunction: TransferFunction = transferFunctionLogistic()){
 
     constructor(aggregationFunction: AggregationFunction = aggregationFunctionSum(),
                 transferFunction: TransferFunction = transferFunctionLogistic(),
@@ -22,16 +22,17 @@ class Neuron(private val aggregationFunction: AggregationFunction = aggregationF
             _memory = value
         }
 
-
     var bias : Bias = 0.0
 
-    fun signal(inputs: DoubleArray) : Double{
+    fun aggregate(inputs: DoubleArray) : Double {
         if(inputs.size != memory.size){
-            throw IllegalStateException("The number of inputs must be equal to memory size. " +
-                    "Number of inputs is ${inputs.size}, memory size is ${memory.size}.")
+            throw IllegalStateException("The number of inputs (${inputs.size}) " +
+                    "is not equal to memory size (${memory.size}).")
         }
-
-        val excitation = aggregationFunction(inputs, memory, bias)
-        return transferFunction(excitation)
+        return aggregationFunction(inputs, memory, bias)
     }
+
+    fun transfer(value: Double) = transferFunction.transfer(value)
+
+    fun signal(inputs: DoubleArray) = transfer(aggregate(inputs))
 }

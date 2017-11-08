@@ -3,6 +3,8 @@ package com.imogene.neuro
 interface Structure {
 
     val size : Int
+
+    fun signal(inputs: DoubleArray) : DoubleArray
 }
 
 interface LayerStructure : Structure {
@@ -12,8 +14,6 @@ interface LayerStructure : Structure {
     var memory : LayerMemory
 
     var biases : LayerBiases
-
-    fun signal(inputs: DoubleArray) : DoubleArray
 }
 
 interface MultiLayerStructure : Structure {

@@ -2,8 +2,8 @@ package com.imogene.neuro.impl
 
 import com.imogene.neuro.*
 
-internal class MultiLayerNetImpl(layers: Array<LayerStructure>) :
-        MultiLayerStructureImpl(layers), MultiLayerTaskSolverNet{
+internal class MultiLayerSplitNetImpl(structures: Array<MultiLayerStructure>)
+    : MultiLayerSplitStructureImpl(structures), MultiLayerSplitTaskSolverNet {
 
     override fun solve(inputs: DoubleArray) = signal(inputs)
 
@@ -15,10 +15,5 @@ internal class MultiLayerNetImpl(layers: Array<LayerStructure>) :
 
     override fun solve(task: Task) : DoubleArray {
         return solve(task.inputs)
-    }
-
-    companion object {
-
-        fun startBuilding() : InputLayerBuilder = NeuralNetworkBuilder()
     }
 }

@@ -45,4 +45,8 @@ internal open class MultiLayerSplitStructureImpl(final override val structures: 
                 structures[index].biases = biases
             }
         }
+
+    override fun signal(inputs: DoubleArray) = DoubleArray(structuresCount){
+        this[it].signal(inputs)[0]
+    }
 }

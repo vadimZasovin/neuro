@@ -26,24 +26,28 @@ interface MultiLayerSplitTaskSolverNet : MultiLayerSplitNet {
 
 interface ClassificationNet<out T> : MultiLayerStructure {
 
-    fun solve(inputs: DoubleArray) : T
+    var probabilityThreshold : Double
+
+    fun solve(inputs: DoubleArray) : ClassificationAnswer<out T>
 }
 
 interface ClassificationTaskSolverNet<out T> : ClassificationNet<T> {
 
     fun newTask() : Task
 
-    fun solve(task: Task) : T
+    fun solve(task: Task) : ClassificationAnswer<out T>
 }
 
-interface ClassificationSplitNet<out T> : MultiLayerSplitStructure {
+interface ClassificationSplitNet<T> : MultiLayerSplitStructure {
 
-    fun solve(inputs: DoubleArray) : T
+    var probabilityThreshold : Double
+
+    fun solve(inputs: DoubleArray) : ClassificationAnswer<T>
 }
 
-interface ClassificationSplitTaskSolverNet<out T> : ClassificationSplitNet<T> {
+interface ClassificationSplitTaskSolverNet<T> : ClassificationSplitNet<T> {
 
     fun newTask() : Task
 
-    fun solve(task: Task) : T
+    fun solve(task: Task) : ClassificationAnswer<T>
 }
