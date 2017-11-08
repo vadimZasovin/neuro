@@ -16,7 +16,7 @@ internal open class MultiLayerSplitStructureImpl(final override val structures: 
         }
     }
 
-    override val size: Int get() = structures.sumBy { it.size }
+    override val size get() = structures.sumBy { it.size }
 
     override var memory: MultiLayerSplitMemory
         get() = MultiLayerSplitMemory(structuresCount){
