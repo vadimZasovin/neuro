@@ -1,10 +1,12 @@
 package com.imogene.neuro
 
 class ClassificationAnswer<T> private constructor(
-        val definiteResult : Result<T>?,
+        private val _definiteResult : Result<T>?,
         val results : Array<Result<T>>){
 
-    val hasDefiniteResult get() = definiteResult != null
+    val hasDefiniteResult get() = _definiteResult != null
+
+    val definiteResult get() = _definiteResult ?: throw IllegalStateException("There is no definite result.")
 
     val matchingThresholdResultsCount get() = results.count { it.matchingThreshold }
 
