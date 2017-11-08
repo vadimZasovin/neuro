@@ -38,16 +38,16 @@ interface ClassificationTaskSolverNet<out T> : ClassificationNet<T> {
     fun solve(task: Task) : ClassificationAnswer<out T>
 }
 
-interface ClassificationSplitNet<T> : MultiLayerSplitStructure {
+interface ClassificationSplitNet<out T> : MultiLayerSplitStructure {
 
     var probabilityThreshold : Double
 
-    fun solve(inputs: DoubleArray) : ClassificationAnswer<T>
+    fun solve(inputs: DoubleArray) : ClassificationAnswer<out T>
 }
 
-interface ClassificationSplitTaskSolverNet<T> : ClassificationSplitNet<T> {
+interface ClassificationSplitTaskSolverNet<out T> : ClassificationSplitNet<T> {
 
     fun newTask() : Task
 
-    fun solve(task: Task) : ClassificationAnswer<T>
+    fun solve(task: Task) : ClassificationAnswer<out T>
 }
