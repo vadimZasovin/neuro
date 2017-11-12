@@ -3,8 +3,32 @@ package com.imogene.neuro
 import com.imogene.neuro.impl.MultiLayerNetImpl
 import java.util.*
 
-data class CustomVariable(private val value: Int)
-
 fun main(args: Array<String>){
-    println(0 * Double.NEGATIVE_INFINITY)
+    val afSum = AggregationFunctions.sum()
+    val tfEmpty = TransferFunctions.empty()
+    val tfSigmoid = TransferFunctions.logistic()
+    val tfTan = TransferFunctions.tanh()
+
+    val net = NeuralNetwork("белый", "черный", "азиат") {
+        layer(20, afSum, tfEmpty)  // input layer
+        layer(8, afSum, tfSigmoid) // first hidden layer
+        layer {                        // second hidden layer
+            neuron(afSum, tfSigmoid)
+            neuron(afSum, tfTan)
+            neuron(afSum, tfSigmoid)
+            neuron(afSum, tfTan)
+        }
+        layer(3, afSum, tfTan)     // output layer (size = 3 = possible values count)
+    }
+
+    net.prepareBiases()
+    net.prepareMemory()
+
+    val random = Random()
+    val answer = net.solve(DoubleArray(20, { // input vector (size = 20 = input layer size)
+        random.nextDouble()
+    }))
+
+    assert(answer.hasDefiniteResult && answer.definiteResult.value == "белый")
+    println(answer.ambiguousResultsCount)
 }

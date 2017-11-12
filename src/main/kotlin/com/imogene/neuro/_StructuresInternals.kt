@@ -17,6 +17,7 @@ internal fun LayerStructure.prepareBiases(){
 }
 
 internal fun MultiLayerStructure.prepareMemory(){
+    inputLayer.prepareMemory(1)
     var layerSize = inputLayer.size
     for(i in 1 until layersCount){
         val layer = layers[i]
