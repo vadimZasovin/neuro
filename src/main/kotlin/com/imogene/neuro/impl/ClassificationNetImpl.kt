@@ -3,8 +3,10 @@ package com.imogene.neuro.impl
 import com.imogene.neuro.*
 
 internal class ClassificationNetImpl<out T>(
-        layers: Array<LayerStructure>,
-        private vararg val possibleValues: T) : MultiLayerStructureImpl(layers) , ClassificationTaskSolverNet<T> {
+        layers: List<LayerStructure>,
+        private vararg val possibleValues: T) :
+        MultiLayerStructureImpl(layers) ,
+        ClassificationTaskSolverNet<T> {
 
     override var probabilityThreshold: Double = 0.85
         set(value) {

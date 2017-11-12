@@ -2,7 +2,7 @@ package com.imogene.neuro
 
 class ClassificationAnswer<T> private constructor(
         private val _definiteResult : Result<T>?,
-        val results : Array<Result<T>>){
+        val results : List<Result<T>>){
 
     val hasDefiniteResult get() = _definiteResult != null
 
@@ -49,7 +49,7 @@ class ClassificationAnswer<T> private constructor(
                 max -= min
             }
 
-            val results = Array(size){
+            var results = initList(size){
                 val value = possibleValues[it]
                 val signal = signals[it]
 
@@ -63,7 +63,7 @@ class ClassificationAnswer<T> private constructor(
                 Result(value, signal, probability, matching)
             }
 
-            results.sortByDescending { it.probability }
+            results = results.sortedByDescending { it.probability }
             val bestResult = results[0]
             var definiteResult : Result<T>? = null
             if(bestResult.matchingThreshold){

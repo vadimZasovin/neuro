@@ -9,7 +9,7 @@ interface Structure {
 
 interface LayerStructure : Structure {
 
-    val neurons : Array<Neuron>
+    val neurons : List<Neuron>
 
     var memory : LayerMemory
 
@@ -18,7 +18,7 @@ interface LayerStructure : Structure {
 
 interface MultiLayerStructure : Structure {
 
-    val layers : Array<LayerStructure>
+    val layers : List<LayerStructure>
 
     var memory : MultiLayerMemory
 
@@ -27,7 +27,7 @@ interface MultiLayerStructure : Structure {
 
 interface MultiLayerSplitStructure : Structure {
 
-    val structures : Array<MultiLayerStructure>
+    val structures : List<MultiLayerStructure>
 
     var memory : MultiLayerSplitMemory
 

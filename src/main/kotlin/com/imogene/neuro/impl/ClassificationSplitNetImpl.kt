@@ -3,7 +3,7 @@ package com.imogene.neuro.impl
 import com.imogene.neuro.*
 
 internal class ClassificationSplitNetImpl<out T>(
-        structures: Array<MultiLayerStructure>,
+        structures: List<MultiLayerStructure>,
         private vararg val possibleValues: T) :
         MultiLayerSplitStructureImpl(structures),
         ClassificationSplitTaskSolverNet<T> {

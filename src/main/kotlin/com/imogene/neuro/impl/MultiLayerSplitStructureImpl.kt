@@ -2,8 +2,8 @@ package com.imogene.neuro.impl
 
 import com.imogene.neuro.*
 
-internal open class MultiLayerSplitStructureImpl(final override val structures: Array<MultiLayerStructure>)
-    : MultiLayerSplitStructure {
+internal open class MultiLayerSplitStructureImpl(
+        final override val structures: List<MultiLayerStructure>) : MultiLayerSplitStructure {
 
     init {
         if(structuresCount < 2){

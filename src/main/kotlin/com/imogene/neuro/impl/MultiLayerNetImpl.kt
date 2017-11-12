@@ -2,7 +2,7 @@ package com.imogene.neuro.impl
 
 import com.imogene.neuro.*
 
-internal class MultiLayerNetImpl(layers: Array<LayerStructure>) :
+internal class MultiLayerNetImpl(layers: List<LayerStructure>) :
         MultiLayerStructureImpl(layers), MultiLayerTaskSolverNet{
 
     override fun solve(inputs: DoubleArray) = signal(inputs)

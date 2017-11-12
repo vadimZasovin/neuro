@@ -1,15 +1,15 @@
 package com.imogene.neuro
 
-class Layer(override val neurons: Array<Neuron>) : LayerStructure {
+class Layer(override val neurons: List<Neuron>) : LayerStructure {
 
-    constructor(size: Int, layerInitializer: (Int) -> Neuron) : this(Array(size, layerInitializer))
+    constructor(size: Int, layerInitializer: (Int) -> Neuron) : this(initList(size, layerInitializer))
 
     constructor(size: Int, aggregationFunction: AggregationFunction, transferFunction: TransferFunction)
             : this(size = size, layerInitializer = { Neuron(aggregationFunction, transferFunction) })
 
     init {
         if(neurons.isEmpty()){
-            throw IllegalArgumentException("The layer mast not be empty")
+            throw IllegalArgumentException("The layer must not be empty.")
         }
     }
 
