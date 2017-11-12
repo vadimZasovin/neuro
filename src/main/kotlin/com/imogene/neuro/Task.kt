@@ -1,177 +1,170 @@
 package com.imogene.neuro
 
-class TaskTemplate{
+class TaskTemplate internal constructor(
+        internal val inputLayer: LayerStructure,
+        internal val normalizers: Map<MutableRange, Normalizer<*>>,
+        internal val nominalVariables: Map<Int, NominalVariable<*>>)
+
+class TaskTemplateBuilder internal constructor(){
 
     private var neuronsCounter = 0
 
-    internal val normalizers = mutableMapOf<MutableRange, Normalizer<*>>()
+    private val normalizers = mutableMapOf<MutableRange, Normalizer<*>>()
 
-    internal val nominalVariables = mutableMapOf<Int, NominalVariable<*>>()
+    private val nominalVariables = mutableMapOf<Int, NominalVariable<*>>()
 
-    fun addVariable() : TaskTemplate {
+    fun variable(){
         neuronsCounter++
-        return this
     }
 
-    fun addVariables(count: Int) : TaskTemplate {
+    fun variables(count: Int){
         neuronsCounter += count
-        return this
     }
 
-    fun addVariable(normalizer: Normalizer<*>) : TaskTemplate {
-        return addVariables(1, normalizer)
+    fun variable(normalizer: Normalizer<*>){
+        variables(1, normalizer)
     }
 
-    fun addVariables(count: Int, normalizer: Normalizer<*>) : TaskTemplate {
+    fun variables(count: Int, normalizer: Normalizer<*>){
         val first = neuronsCounter
         neuronsCounter += count
         val last = neuronsCounter
         val range = first to last
         normalizers.put(range, normalizer)
-        return this
     }
 
-    fun <T> addNominalVariable(vararg possibleValues: T) : TaskTemplate {
+    fun <T> nominalVariable(vararg possibleValues: T){
         val variable = NominalVariable(*possibleValues)
         nominalVariables.put(neuronsCounter, variable)
         val size = if(variable.size == 2) 1 else variable.size
         neuronsCounter += size
-        return this
     }
 
-    internal fun createInputLayer(transferFunction: TransferFunction) : Layer {
-        return Layer(neuronsCounter, layerInitializer = {
-            Neuron(aggregationFunctionSum(), transferFunction, 1, {1.0})
+    internal fun build(transferFunction: TransferFunction) : TaskTemplate{
+        val inputLayer = Layer(neuronsCounter, layerInitializer = {
+            Neuron(AggregationFunctions.sum(), transferFunction, 1, {1.0})
         })
+        return TaskTemplate(inputLayer, normalizers, nominalVariables)
     }
 }
 
-class Task internal constructor(
+@Suppress("FunctionName")
+fun TaskTemplate(transferFunction: TransferFunction, apply: TaskTemplateBuilder.() -> Unit) : TaskTemplate {
+    val builder = TaskTemplateBuilder()
+    builder.apply()
+    return builder.build(transferFunction)
+}
+
+class TaskBuilder internal constructor(
         private val normalizers: Map<MutableRange, Normalizer<*>>?,
         private val nominalVariables: Map<Int, NominalVariable<*>>?){
 
     private val _inputs = mutableListOf<Double>()
 
-    fun addVariable(value: Double) : Task {
+    fun variable(value: Double) {
         val normalized : Double
         val normalizer = findNormalizer<Double>()
         normalized = normalizer?.normalize(value) ?: value.normalize()
         _inputs.add(normalized)
-        return this
     }
 
-    fun addVariables(vararg values: Double) : Task {
+    fun variables(vararg values: Double) {
         val count = values.size
         val normalizer = findNormalizer<Double>(count)
         values.mapTo(_inputs){ normalizer?.normalize(it) ?: it.normalize() }
-        return this
     }
 
-    fun addVariable(value: Float) : Task {
+    fun variable(value: Float) {
         val normalized : Double
         val normalizer = findNormalizer<Float>()
         normalized = normalizer?.normalize(value) ?: value.normalize()
         _inputs.add(normalized)
-        return this
     }
 
-    fun addVariables(vararg values: Float) : Task {
+    fun variables(vararg values: Float) {
         val count = values.size
         val normalizer = findNormalizer<Float>(count)
         values.mapTo(_inputs){ normalizer?.normalize(it) ?: it.normalize() }
-        return this
     }
 
-    fun addVariable(value: Long) : Task {
+    fun variable(value: Long) {
         val normalized : Double
         val normalizer = findNormalizer<Long>()
         normalized = normalizer?.normalize(value) ?: value.normalize()
         _inputs.add(normalized)
-        return this
     }
 
-    fun addVariables(vararg values: Long) : Task {
+    fun variables(vararg values: Long) {
         val count = values.size
         val normalizer = findNormalizer<Long>(count)
         values.mapTo(_inputs){ normalizer?.normalize(it) ?: it.normalize() }
-        return this
     }
 
-    fun addVariable(value: Int) : Task {
+    fun variable(value: Int) {
         val normalized : Double
         val normalizer = findNormalizer<Int>()
         normalized = normalizer?.normalize(value) ?: value.normalize()
         _inputs.add(normalized)
-        return this
     }
 
-    fun addVariables(vararg values: Int) : Task {
+    fun variables(vararg values: Int) {
         val count = values.size
         val normalizer = findNormalizer<Int>(count)
         values.mapTo(_inputs){ normalizer?.normalize(it) ?: it.normalize() }
-        return this
     }
 
-    fun addVariable(value: Short) : Task {
+    fun variable(value: Short) {
         val normalized : Double
         val normalizer = findNormalizer<Short>()
         normalized = normalizer?.normalize(value) ?: value.normalize()
         _inputs.add(normalized)
-        return this
     }
 
-    fun addVariables(vararg values: Short) : Task {
+    fun variables(vararg values: Short) {
         val count = values.size
         val normalizer = findNormalizer<Short>(count)
         values.mapTo(_inputs){ normalizer?.normalize(it) ?: it.normalize() }
-        return this
     }
 
-    fun addVariable(value: Byte) : Task {
+    fun variable(value: Byte) {
         val normalized : Double
         val normalizer = findNormalizer<Byte>()
         normalized = normalizer?.normalize(value) ?: value.normalize()
         _inputs.add(normalized)
-        return this
     }
 
-    fun addVariables(vararg values: Byte) : Task {
+    fun variables(vararg values: Byte) {
         val count = values.size
         val normalizer = findNormalizer<Byte>(count)
         values.mapTo(_inputs){ normalizer?.normalize(it) ?: it.normalize() }
-        return this
     }
 
-    fun addVariable(value: Boolean) : Task {
+    fun variable(value: Boolean) {
         val normalized : Double
         val normalizer = findNormalizer<Boolean>()
         normalized = normalizer?.normalize(value) ?: value.normalize()
         _inputs.add(normalized)
-        return this
     }
 
-    fun addVariables(vararg values: Boolean) : Task {
+    fun variables(vararg values: Boolean) {
         val count = values.size
         val normalizer = findNormalizer<Boolean>(count)
         values.mapTo(_inputs){ normalizer?.normalize(it) ?: it.normalize() }
-        return this
     }
 
-    fun <T> addVariable(value: T) : Task {
+    fun <T> variable(value: T) {
         val normalizer = getNormalizer<T>()
         val normalized = normalizer.normalize(value)
         _inputs.add(normalized)
-        return this
     }
 
-    fun <T> addVariables(vararg values: T) : Task {
+    fun <T> variables(vararg values: T) {
         val count = values.size
         val normalizer = getNormalizer<T>(count)
         values.mapTo(_inputs){ normalizer.normalize(it) }
-        return this
     }
 
-    fun <T> addNominalVariable(value: T) : Task {
+    fun <T> nominalVariable(value: T) {
         val variable = getNominalVariableDefinition<T>()
         val size = variable.size
         val index = variable.indexOf(value)
@@ -180,7 +173,6 @@ class Task internal constructor(
         }else{
             (0 until size).mapTo(_inputs) { if(it == index) 1.0 else 0.0 }
         }
-        return this
     }
 
     private fun <T> findNormalizer(rangeSize: Int = 1) : Normalizer<T>? {
@@ -212,8 +204,7 @@ class Task internal constructor(
         }
     }
 
-    private val position
-        get() = _inputs.size
+    private val position get() = _inputs.size
 
     private fun getCurrentRange(size: Int) : MutableRange {
         range.first = position
@@ -225,6 +216,5 @@ class Task internal constructor(
         MutableRange(0, 0)
     }
 
-    internal val inputs
-        get() = _inputs.toDoubleArray()
+    internal val inputs get() = _inputs.toDoubleArray()
 }

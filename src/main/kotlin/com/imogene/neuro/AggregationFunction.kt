@@ -1,6 +1,6 @@
 package com.imogene.neuro
 
-interface TestA {
+interface AggregationFunction {
 
     fun aggregate(inputs: DoubleArray, memory: DoubleArray, bias: Double) : Double
 }

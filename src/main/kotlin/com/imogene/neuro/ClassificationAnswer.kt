@@ -16,7 +16,8 @@ class ClassificationAnswer<T> private constructor(
         hasDefiniteResult -> 0
         matchingThresholdResultsCount > 1 -> {
             val first = results[0]
-            results.count { it.probability == first.probability }
+            val probability = first.probability
+            results.count { it.probability == probability }
         }
         else -> 0
     }

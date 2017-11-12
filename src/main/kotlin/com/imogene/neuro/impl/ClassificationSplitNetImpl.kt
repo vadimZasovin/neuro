@@ -34,7 +34,9 @@ internal class ClassificationSplitNetImpl<out T>(
 
     var nominalVariables : Map<Int, NominalVariable<*>>? = null
 
-    override fun newTask() = Task(normalizers, nominalVariables)
-
-    override fun solve(task: Task) = solve(task.inputs)
+    override fun solve(build: TaskBuilder.() -> Unit) : ClassificationAnswer<out T> {
+        val builder = TaskBuilder(normalizers, nominalVariables)
+        builder.build()
+        return solve(builder.inputs)
+    }
 }

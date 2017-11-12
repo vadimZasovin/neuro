@@ -2,58 +2,69 @@ package com.imogene.neuro
 
 object TransferFunctions {
 
-    private val cache = mutableMapOf<String, TestF>()
-
-    fun create(min: Double, max: Double, cacheKey: String?, func: (Double) -> Double) = if(cacheKey != null){
-        cache[cacheKey] ?: createInternal(min, max, cacheKey, func)
-    }else{
-        createInternal(min, max, cacheKey, func)
+    fun empty() = object : TransferFunction(){
+        override fun transfer(value: Double) = value
     }
 
-    private fun createInternal(min: Double, max: Double, cacheKey: String?, func: (Double) -> Double) : TestF {
-        val result = object : TestF {
-            override fun transfer(value: Double) = func(value)
-            override val min: Double get() = min
-            override val max: Double get() = max
-        }
-        if(cacheKey != null){
-            cache.put(cacheKey, result)
-        }
-        return result
-    }
-
-    fun empty() = create(-Double.MAX_VALUE, Double.MAX_VALUE, "EMPTY"){ it }
-
-    fun linear(k: Double) = create(-Double.MAX_VALUE, Double.MAX_VALUE, "LINEAR$k"){ it * k }
-
-    fun semiLinear(k: Double) = create(0.0, Double.MAX_VALUE, cacheKey = "SEMI_LINEAR$k"){
-        if(it < 0){
-            0.0
+    fun linear(k: Double) : TransferFunction {
+        val min : Double
+        val max : Double
+        if(k == 0.0){
+            min = 0.0
+            max = 0.0
         }else{
-            k * it
+            min = Double.NEGATIVE_INFINITY
+            max = Double.POSITIVE_INFINITY
+        }
+        return object : TransferFunction(min, max){
+            override fun transfer(value: Double) = k * value
         }
     }
 
-    fun withSaturation(range: ClosedRange<Double>) : TestF {
+    fun semiLinear(k: Double) : TransferFunction {
+        val min : Double
+        val max : Double
+        if(k > 0){
+            min = 0.0
+            max = Double.POSITIVE_INFINITY
+        }else{
+            if(k == 0.0){
+                min = 0.0
+            }else{
+                min = Double.NEGATIVE_INFINITY
+            }
+            max = 0.0
+        }
+        return object : TransferFunction(min, max){
+            override fun transfer(value: Double) = if(value < 0){
+                0.0
+            }else{
+                k * value
+            }
+        }
+    }
+
+    fun withSaturation(range: ClosedRange<Double>) : TransferFunction {
         val min = range.start
         val max = range.endInclusive
-        val cacheKey = "WITH_SATURATION$min-$max"
-        return create(min, max, cacheKey){
-            when {
-                it in range -> it
-                it < range.start -> range.start
+        return object : TransferFunction(min, max){
+            override fun transfer(value: Double) = when {
+                value in range -> value
+                value < range.start -> range.start
                 else -> range.endInclusive
             }
         }
     }
 
-    fun withThreshold(threshold: Double) = create(0.0, 1.0, "THRESHOLD$threshold"){
-        if(it >= threshold) 1.0 else 0.0
+    fun withThreshold(threshold: Double) = object : TransferFunction(0.0, 1.0){
+        override fun transfer(value: Double) = if(value >= threshold) 1.0 else 0.0
     }
 
-    fun logistic(k: Double = 0.5) = create(0.0, 1.0, "LOGISTIC$k"){
-        1 / (1 + Math.exp(-k * it))
+    fun logistic(k: Double = 0.5) = object : TransferFunction(0.0, 1.0){
+        override fun transfer(value: Double) = 1 / (1 + Math.exp(-k * value))
     }
 
-    fun tanh(k: Double = 0.5) = create(-1.0, 1.0, "TANH$k"){ Math.tanh(k * it) }
+    fun tanh(k: Double = 0.5) = object : TransferFunction(-1.0, 1.0){
+        override fun transfer(value: Double) = Math.tanh(k * value)
+    }
 }

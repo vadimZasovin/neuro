@@ -7,9 +7,7 @@ interface MultiLayerNet : MultiLayerStructure {
 
 interface MultiLayerTaskSolverNet : MultiLayerNet {
 
-    fun newTask() : Task
-
-    fun solve(task: Task) : DoubleArray
+    fun solve(build: TaskBuilder.() -> Unit) : DoubleArray
 }
 
 interface MultiLayerSplitNet : MultiLayerSplitStructure {
@@ -19,9 +17,7 @@ interface MultiLayerSplitNet : MultiLayerSplitStructure {
 
 interface MultiLayerSplitTaskSolverNet : MultiLayerSplitNet {
 
-    fun newTask() : Task
-
-    fun solve(task: Task) : DoubleArray
+    fun solve(build: TaskBuilder.() -> Unit) : DoubleArray
 }
 
 interface ClassificationNet<out T> : MultiLayerStructure {
@@ -33,9 +29,9 @@ interface ClassificationNet<out T> : MultiLayerStructure {
 
 interface ClassificationTaskSolverNet<out T> : ClassificationNet<T> {
 
-    fun newTask() : Task
+    override var probabilityThreshold : Double
 
-    fun solve(task: Task) : ClassificationAnswer<out T>
+    fun solve(build: TaskBuilder.() -> Unit) : ClassificationAnswer<out T>
 }
 
 interface ClassificationSplitNet<out T> : MultiLayerSplitStructure {
@@ -47,7 +43,7 @@ interface ClassificationSplitNet<out T> : MultiLayerSplitStructure {
 
 interface ClassificationSplitTaskSolverNet<out T> : ClassificationSplitNet<T> {
 
-    fun newTask() : Task
+    override var probabilityThreshold : Double
 
-    fun solve(task: Task) : ClassificationAnswer<out T>
+    fun solve(build: TaskBuilder.() -> Unit) : ClassificationAnswer<out T>
 }
