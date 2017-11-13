@@ -1,29 +1,42 @@
 package com.imogene.neuro
 
-internal fun LayerStructure.prepareMemory(size: Int){
+import java.util.*
+
+internal fun LayerStructure.prepareMemory(inputsCount: Int, initializer: (Int) -> Double){
     memory = LayerMemory(this.size){
-        NeuronMemory(size){
-            1.0
-            // TODO implement random filling
-        }
+        NeuronMemory(inputsCount, initializer)
+    }
+}
+
+internal fun LayerStructure.prepareMemory(inputsCount: Int){
+    val random = Random()
+    prepareMemory(inputsCount){
+        random.nextDouble()
     }
 }
 
 internal fun LayerStructure.prepareBiases(){
-    biases = DoubleArray(size){
-        1.0
-        // TODO implement random filling
+    val random = Random()
+    biases = LayerBiases(size){
+        random.nextDouble()
     }
 }
 
 internal fun MultiLayerStructure.prepareMemory(){
-    inputLayer.prepareMemory(1)
+    inputLayer.prepareMemory(1){ 1.0 }
     var layerSize = inputLayer.size
-    for(i in 1 until layersCount){
-        val layer = layers[i]
-        layer.prepareMemory(layerSize)
-        layerSize = layer.size
-    }
+    (1 until layersCount)
+            .asSequence()
+            .map { this[it] }
+            .forEach {
+                it.prepareMemory(layerSize)
+                layerSize = it.size
+            }
 }
 
-internal fun MultiLayerStructure.prepareBiases() = layers.forEach { it.prepareBiases() }
+internal fun MultiLayerStructure.prepareBiases(){
+    (1 until layersCount)
+            .asSequence()
+            .map { this[it] }
+            .forEach { it.prepareBiases() }
+}

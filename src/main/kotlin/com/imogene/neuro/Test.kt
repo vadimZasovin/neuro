@@ -28,6 +28,5 @@ fun main(args: Array<String>){
         random.nextDouble()
     }))
 
-    assert(answer.hasDefiniteResult && answer.definiteResult.value == "белый")
-    println(answer.ambiguousResultsCount)
+    answer.results.forEach { println(it.value + " " + it.probabilityPercent) }
 }
