@@ -49,10 +49,10 @@ class TaskTemplateBuilder internal constructor(){
 }
 
 @Suppress("FunctionName")
-fun TaskTemplate(transferFunction: TransferFunction, apply: TaskTemplateBuilder.() -> Unit) : TaskTemplate {
+fun TaskTemplate(build: TaskTemplateBuilder.() -> Unit) : TaskTemplate {
     val builder = TaskTemplateBuilder()
-    builder.apply()
-    return builder.build(transferFunction)
+    builder.build()
+    return builder.build(TransferFunctions.empty())
 }
 
 class TaskBuilder internal constructor(

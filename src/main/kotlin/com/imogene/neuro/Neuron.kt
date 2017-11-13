@@ -1,6 +1,6 @@
 package com.imogene.neuro
 
-class Neuron(val aggregationFunction: AggregationFunction, val transferFunction: TransferFunction){
+class Neuron(var aggregationFunction: AggregationFunction, var transferFunction: TransferFunction){
 
     constructor(aggregationFunction: AggregationFunction,
                 transferFunction: TransferFunction,
