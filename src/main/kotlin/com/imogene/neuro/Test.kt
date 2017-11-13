@@ -18,7 +18,6 @@ fun main(args: Array<String>){
             neuron(afSum, tfSigmoid)
             neuron(afSum, tfTan)
         }
-        layer(3, afSum, tfTan)     // output layer (size = 3 = possible values count)
     }
 
     net.prepareBiases()

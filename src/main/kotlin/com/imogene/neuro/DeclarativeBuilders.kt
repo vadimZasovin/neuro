@@ -65,6 +65,7 @@ fun NeuralNetwork(taskTemplate: TaskTemplate, build: LayersBuilder.() -> Unit) :
 fun <T> NeuralNetwork(vararg possibleValues: T, build: LayersBuilder.() -> Unit) : ClassificationNet<T> {
     val builder = LayersBuilder()
     builder.build()
+    builder.layer(possibleValues.size, AggregationFunctions.sum(), TransferFunctions.tanh())
     return ClassificationNetImpl(builder.layers, *possibleValues)
 }
 
@@ -75,6 +76,7 @@ fun <T> NeuralNetwork(taskTemplate: TaskTemplate,
     val builder = LayersBuilder()
     builder.layer(taskTemplate.inputLayer)
     builder.build()
+    builder.layer(possibleValues.size, AggregationFunctions.sum(), TransferFunctions.tanh())
     val net = ClassificationNetImpl(builder.layers, *possibleValues)
     net.normalizers = taskTemplate.normalizers
     net.nominalVariables = taskTemplate.nominalVariables
