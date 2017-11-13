@@ -40,3 +40,11 @@ internal fun MultiLayerStructure.prepareBiases(){
             .map { this[it] }
             .forEach { it.prepareBiases() }
 }
+
+internal fun MultiLayerSplitStructure.prepareMemory(){
+    structures.forEach { it.prepareMemory() }
+}
+
+internal fun MultiLayerSplitStructure.prepareBiases(){
+    structures.forEach { it.prepareBiases() }
+}
