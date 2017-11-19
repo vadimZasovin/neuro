@@ -25,7 +25,7 @@ internal class ClassificationNetImpl<out T>(
         maxSignal = transferFunction.max
     }
 
-    override fun solve(inputs: DoubleArray): ClassificationAnswer<out T> {
+    override fun solve(inputs: DoubleArray): ClassificationAnswer<T> {
         val outputs = signal(inputs)
         return ClassificationAnswer.from(possibleValues, outputs, probabilityThreshold, minSignal, maxSignal)
     }
@@ -34,9 +34,17 @@ internal class ClassificationNetImpl<out T>(
 
     var nominalVariables : Map<Int, NominalVariable<*>>? = null
 
-    override fun solve(build: TaskBuilder.() -> Unit) : ClassificationAnswer<out T> {
+    override fun solve(build: TaskBuilder.() -> Unit) : ClassificationAnswer<T> {
         val builder = TaskBuilder(normalizers, nominalVariables)
         builder.build()
         return solve(builder.inputs)
+    }
+
+    override fun split(): ClassificationSplitTaskSolverNet<T> {
+        val structure = super.split()
+        val net = ClassificationSplitNetImpl(structure.structures, *possibleValues)
+        net.normalizers = normalizers
+        net.nominalVariables = nominalVariables
+        return net
     }
 }

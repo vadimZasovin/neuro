@@ -18,9 +18,9 @@ class LayerBuilder internal constructor() {
 
 class LayersBuilder internal constructor() {
 
-    internal val layers = mutableListOf<LayerStructure>()
+    internal val layers = mutableListOf<Layer>()
 
-    fun layer(layer: LayerStructure){
+    fun layer(layer: Layer){
         layers.add(layer)
     }
 
@@ -38,7 +38,7 @@ class LayersBuilder internal constructor() {
         layer(Layer(builder.neurons))
     }
 
-    fun layers(layers: Iterable<LayerStructure>){
+    fun layers(layers: Iterable<Layer>){
         this.layers.addAll(layers)
     }
 }
@@ -52,8 +52,9 @@ fun NeuralNetwork(build: LayersBuilder.() -> Unit) : MultiLayerNet {
 
 @Suppress("FunctionName")
 fun NeuralNetwork(taskTemplate: TaskTemplate, build: LayersBuilder.() -> Unit) : MultiLayerTaskSolverNet {
+    val inputLayer = Layer(taskTemplate.inputNeurons)
     val builder = LayersBuilder()
-    builder.layer(taskTemplate.inputLayer)
+    builder.layer(inputLayer)
     builder.build()
     val net = MultiLayerNetImpl(builder.layers)
     net.normalizers = taskTemplate.normalizers
@@ -73,8 +74,9 @@ fun <T> NeuralNetwork(vararg possibleValues: T, build: LayersBuilder.() -> Unit)
 fun <T> NeuralNetwork(taskTemplate: TaskTemplate,
                       vararg possibleValues: T,
                       build: LayersBuilder.() -> Unit) : ClassificationTaskSolverNet<T> {
+    val inputLayer = Layer(taskTemplate.inputNeurons)
     val builder = LayersBuilder()
-    builder.layer(taskTemplate.inputLayer)
+    builder.layer(inputLayer)
     builder.build()
     builder.layer(possibleValues.size, AggregationFunctions.sum(), TransferFunctions.tanh())
     val net = ClassificationNetImpl(builder.layers, *possibleValues)

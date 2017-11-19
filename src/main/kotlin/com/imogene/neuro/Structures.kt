@@ -14,6 +14,8 @@ interface LayerStructure : Structure {
     var memory : LayerMemory
 
     var biases : LayerBiases
+
+    fun copy() : LayerStructure
 }
 
 interface MultiLayerStructure : Structure {
@@ -23,6 +25,8 @@ interface MultiLayerStructure : Structure {
     var memory : MultiLayerMemory
 
     var biases : MultiLayerBiases
+
+    fun split() : MultiLayerSplitStructure
 }
 
 interface MultiLayerSplitStructure : Structure {

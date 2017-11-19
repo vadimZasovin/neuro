@@ -1,7 +1,7 @@
 package com.imogene.neuro
 
 class TaskTemplate internal constructor(
-        internal val inputLayer: LayerStructure,
+        internal val inputNeurons: List<Neuron>,
         internal val normalizers: Map<MutableRange, Normalizer<*>>,
         internal val nominalVariables: Map<Int, NominalVariable<*>>)
 
@@ -41,10 +41,11 @@ class TaskTemplateBuilder internal constructor(){
     }
 
     internal fun build(transferFunction: TransferFunction) : TaskTemplate{
-        val inputLayer = Layer(neuronsCounter, layerInitializer = {
-            Neuron(AggregationFunctions.sum(), transferFunction, 1, {1.0})
-        })
-        return TaskTemplate(inputLayer, normalizers, nominalVariables)
+        val aggregationFunction = AggregationFunctions.sum()
+        val inputNeurons = initList(neuronsCounter) {
+            Neuron(aggregationFunction, transferFunction, 1, { 1.0 })
+        }
+        return TaskTemplate(inputNeurons, normalizers, nominalVariables)
     }
 }
 

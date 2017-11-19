@@ -14,9 +14,7 @@ class Layer(override val neurons: List<Neuron>) : LayerStructure {
     }
 
     override var memory : LayerMemory
-        get() = LayerMemory(size){
-            neurons[it].memory
-        }
+        get() = LayerMemory(size){ neurons[it].memory }
         set(value) {
             if(value.size != size){
                 throw IllegalArgumentException("Size of the specified memory (${value.size}) " +
@@ -28,9 +26,7 @@ class Layer(override val neurons: List<Neuron>) : LayerStructure {
         }
 
     override var biases : LayerBiases
-        get() = LayerBiases(size){
-            neurons[it].bias
-        }
+        get() = LayerBiases(size){ neurons[it].bias }
         set(value) {
             if(value.size != size){
                 throw IllegalArgumentException("Size of the specified biases array (${value.size}) " +
@@ -43,10 +39,7 @@ class Layer(override val neurons: List<Neuron>) : LayerStructure {
 
     override val size get() = neurons.size
 
-    override fun signal(inputs: DoubleArray) : DoubleArray{
-        return DoubleArray(size){
-            val neuron = neurons[it]
-            neuron.signal(inputs)
-        }
-    }
+    override fun signal(inputs: DoubleArray) = DoubleArray(size){ neurons[it].signal(inputs) }
+
+    override fun copy() = Layer(size){ neurons[it].copy() }
 }

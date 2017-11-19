@@ -34,4 +34,6 @@ class Neuron(var aggregationFunction: AggregationFunction, var transferFunction:
     fun transfer(value: Double) = transferFunction.transfer(value)
 
     fun signal(inputs: DoubleArray) = transfer(aggregate(inputs))
+
+    internal fun copy() = Neuron(aggregationFunction, transferFunction)
 }

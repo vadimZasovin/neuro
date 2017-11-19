@@ -1,6 +1,6 @@
 package com.imogene.neuro
 
-class ClassificationAnswer<T> private constructor(
+class ClassificationAnswer<out T> private constructor(
         private val _definiteResult : Result<T>?,
         val results : List<Result<T>>){
 
@@ -67,9 +67,7 @@ class ClassificationAnswer<T> private constructor(
             val bestResult = results[0]
             var definiteResult : Result<T>? = null
             if(bestResult.matchingThreshold){
-                if(results.size == 1){
-                    definiteResult = bestResult
-                }else if(bestResult.probability > results[1].probability){
+                if(results.size == 1 || bestResult.probability > results[1].probability){
                     definiteResult = bestResult
                 }
             }

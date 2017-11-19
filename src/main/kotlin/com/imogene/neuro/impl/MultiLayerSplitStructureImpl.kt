@@ -19,9 +19,7 @@ internal open class MultiLayerSplitStructureImpl(
     override val size get() = structures.sumBy { it.size }
 
     override var memory: MultiLayerSplitMemory
-        get() = MultiLayerSplitMemory(structuresCount){
-            structures[it].memory
-        }
+        get() = MultiLayerSplitMemory(structuresCount){ structures[it].memory }
         set(value) {
             if(value.size != structuresCount){
                 throw IllegalArgumentException("Size of the specified memory (${value.size}) " +
@@ -33,9 +31,7 @@ internal open class MultiLayerSplitStructureImpl(
         }
 
     override var biases: MultiLayerSplitBiases
-        get() = MultiLayerSplitBiases(structuresCount){
-            structures[it].biases
-        }
+        get() = MultiLayerSplitBiases(structuresCount){ structures[it].biases }
         set(value) {
             if(value.size != structuresCount){
                 throw IllegalArgumentException("Size of the specified biases array (${value.size}) " +
@@ -47,6 +43,6 @@ internal open class MultiLayerSplitStructureImpl(
         }
 
     override fun signal(inputs: DoubleArray) = DoubleArray(structuresCount){
-        this[it].signal(inputs)[0]
+        structures[it].signal(inputs)[0]
     }
 }

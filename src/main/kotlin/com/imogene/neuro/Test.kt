@@ -18,7 +18,7 @@ fun main(args: Array<String>){
             neuron(afSum, tfSigmoid)
             neuron(afSum, tfTan)
         }
-    }
+    }.split()
 
     net.prepareBiases()
     net.prepareMemory()

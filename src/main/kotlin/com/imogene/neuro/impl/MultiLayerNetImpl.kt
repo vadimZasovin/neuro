@@ -16,4 +16,12 @@ internal class MultiLayerNetImpl(layers: List<LayerStructure>) :
         builder.build()
         return solve(builder.inputs)
     }
+
+    override fun split(): MultiLayerSplitTaskSolverNet {
+        val structure = super.split()
+        val net = MultiLayerSplitNetImpl(structure.structures)
+        net.normalizers = normalizers
+        net.nominalVariables = nominalVariables
+        return net
+    }
 }
