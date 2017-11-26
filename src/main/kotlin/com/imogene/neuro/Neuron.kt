@@ -12,7 +12,7 @@ class Neuron(var aggregationFunction: AggregationFunction, var transferFunction:
     private var _memory : NeuronMemory? = null
 
     var memory : NeuronMemory
-        get() = _memory ?: throw IllegalStateException("Memory is not initialized")
+        get() = _memory ?: throw IllegalStateException("Memory is not initialized.")
         set(value) {
             _memory = value
         }
