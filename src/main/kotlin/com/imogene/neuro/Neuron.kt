@@ -12,18 +12,14 @@ class Neuron(var aggregationFunction: AggregationFunction, var transferFunction:
     private var _memory : NeuronMemory? = null
 
     var memory : NeuronMemory
-        get() = if(_memory == null){
-            throw IllegalStateException("Memory is not initialized")
-        }else {
-            _memory!!
-        }
+        get() = _memory ?: throw IllegalStateException("Memory is not initialized")
         set(value) {
             _memory = value
         }
 
     var bias : Bias = 0.0
 
-    fun aggregate(inputs: DoubleArray) : Double {
+    private fun aggregate(inputs: DoubleArray) : Double {
         if(inputs.size != memory.size){
             throw IllegalStateException("The number of inputs (${inputs.size}) " +
                     "is not equal to memory size (${memory.size}).")
@@ -31,7 +27,7 @@ class Neuron(var aggregationFunction: AggregationFunction, var transferFunction:
         return aggregationFunction.aggregate(inputs, memory, bias)
     }
 
-    fun transfer(value: Double) = transferFunction.transfer(value)
+    private fun transfer(value: Double) = transferFunction.transfer(value)
 
     fun signal(inputs: DoubleArray) = transfer(aggregate(inputs))
 
