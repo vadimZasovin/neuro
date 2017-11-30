@@ -48,10 +48,7 @@ fun LayerStructure.initBiases(){
 fun MultiLayerStructure.initMemory(init: (layerIndex: Int,
                                           neuronIndex: Int,
                                           weightIndex: Int) -> Double){
-    inputLayer.initMemory(1){
-        neuronIndex, weightIndex ->
-        init(0, neuronIndex, weightIndex)
-    }
+    inputLayer.initMemory(1){ _, _ -> 1.0 }
     var layerSize = inputLayer.size
     (1 until layersCount)
             .asSequence()
