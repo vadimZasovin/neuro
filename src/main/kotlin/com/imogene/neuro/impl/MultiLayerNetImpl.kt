@@ -1,6 +1,7 @@
 package com.imogene.neuro.impl
 
 import com.imogene.neuro.*
+import com.imogene.neuro.learning.LearningRule
 
 internal class MultiLayerNetImpl(layers: List<LayerStructure>) :
         MultiLayerStructureImpl(layers), MultiLayerTaskSolverNet{
@@ -23,5 +24,9 @@ internal class MultiLayerNetImpl(layers: List<LayerStructure>) :
         net.normalizers = normalizers
         net.nominalVariables = nominalVariables
         return net
+    }
+
+    override fun <T : LearningRule> learn(rule: T) = rule.apply {
+        rule.apply(this@MultiLayerNetImpl)
     }
 }

@@ -1,6 +1,5 @@
 package com.imogene.neuro
 
-import com.imogene.neuro.impl.MultiLayerNetImpl
 import java.util.*
 
 fun main(args: Array<String>){
@@ -18,10 +17,9 @@ fun main(args: Array<String>){
             neuron(afSum, tfSigmoid)
             neuron(afSum, tfTan)
         }
-    }.split()
+    }
 
-    net.prepareBiases()
-    net.prepareMemory()
+
 
     val random = Random()
     val answer = net.solve(DoubleArray(20, { // input vector (size = 20 = input layer size)
