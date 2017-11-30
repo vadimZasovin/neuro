@@ -1,6 +1,6 @@
 package com.imogene.neuro
 
-import com.imogene.neuro.learning.LearningRule
+import com.imogene.neuro.learning.*
 
 interface MultiLayerNet : MultiLayerStructure {
 
@@ -8,7 +8,9 @@ interface MultiLayerNet : MultiLayerStructure {
 
     override fun split() : MultiLayerSplitNet
 
-    fun <T : LearningRule> learn(rule: T) : T
+    fun learn(rule: SupervisedLearningRule, manage: SupervisedLearningManager.() -> Unit)
+
+    fun learn(rule: UnsupervisedLearningRule, manage: UnsupervisedLearningManager.() -> Unit)
 }
 
 interface MultiLayerTaskSolverNet : MultiLayerNet {
@@ -17,21 +19,23 @@ interface MultiLayerTaskSolverNet : MultiLayerNet {
 
     override fun split() : MultiLayerSplitTaskSolverNet
 
-    override fun <T : LearningRule> learn(rule: T) : T
+    fun learnTasks(rule: SupervisedLearningRule, manage: TaskSolverSupervisedLearningManager.() -> Unit)
+
+    fun learnTasks(rule: UnsupervisedLearningRule, manage: TaskSolverUnsupervisedLearningManager.() -> Unit)
 }
 
 interface MultiLayerSplitNet : MultiLayerSplitStructure {
 
     fun solve(inputs: DoubleArray) : DoubleArray
 
-    fun <T : LearningRule> learn(rule: T) : T
+
 }
 
 interface MultiLayerSplitTaskSolverNet : MultiLayerSplitNet {
 
     fun solve(build: TaskBuilder.() -> Unit) : DoubleArray
 
-    override fun <T : LearningRule> learn(rule: T) : T
+
 }
 
 interface ClassificationNet<out T> : MultiLayerStructure {

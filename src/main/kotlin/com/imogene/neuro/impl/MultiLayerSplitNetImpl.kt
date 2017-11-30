@@ -1,7 +1,6 @@
 package com.imogene.neuro.impl
 
 import com.imogene.neuro.*
-import com.imogene.neuro.learning.LearningRule
 
 internal class MultiLayerSplitNetImpl(structures: List<MultiLayerStructure>)
     : MultiLayerSplitStructureImpl(structures), MultiLayerSplitTaskSolverNet {
@@ -16,9 +15,5 @@ internal class MultiLayerSplitNetImpl(structures: List<MultiLayerStructure>)
         val builder = TaskBuilder(normalizers, nominalVariables)
         builder.build()
         return solve(builder.inputs)
-    }
-
-    override fun <T : LearningRule> learn(rule: T) = rule.apply {
-        rule.apply(this@MultiLayerSplitNetImpl)
     }
 }

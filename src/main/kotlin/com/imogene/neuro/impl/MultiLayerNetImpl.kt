@@ -1,7 +1,7 @@
 package com.imogene.neuro.impl
 
 import com.imogene.neuro.*
-import com.imogene.neuro.learning.LearningRule
+import com.imogene.neuro.learning.*
 
 internal class MultiLayerNetImpl(layers: List<LayerStructure>) :
         MultiLayerStructureImpl(layers), MultiLayerTaskSolverNet{
@@ -26,7 +26,20 @@ internal class MultiLayerNetImpl(layers: List<LayerStructure>) :
         return net
     }
 
-    override fun <T : LearningRule> learn(rule: T) = rule.apply {
-        rule.apply(this@MultiLayerNetImpl)
+    override fun learn(rule: SupervisedLearningRule, manage: SupervisedLearningManager.() -> Unit) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun learn(rule: UnsupervisedLearningRule, manage: UnsupervisedLearningManager.() -> Unit) {
+        val manager = UnsupervisedLearningManager(rule, this)
+        manager.manage()
+    }
+
+    override fun learnTasks(rule: SupervisedLearningRule, manage: TaskSolverSupervisedLearningManager.() -> Unit) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun learnTasks(rule: UnsupervisedLearningRule, manage: TaskSolverUnsupervisedLearningManager.() -> Unit) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }

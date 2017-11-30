@@ -19,7 +19,8 @@ fun main(args: Array<String>){
         }
     }
 
-
+    net.initMemory()
+    net.initBiases()
 
     val random = Random()
     val answer = net.solve(DoubleArray(20, { // input vector (size = 20 = input layer size)
