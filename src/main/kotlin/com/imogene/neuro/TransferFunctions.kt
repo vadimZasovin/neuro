@@ -1,5 +1,7 @@
 package com.imogene.neuro
 
+import kotlin.math.exp
+
 object TransferFunctions {
 
     fun empty() = object : TransferFunction(){
@@ -61,10 +63,10 @@ object TransferFunctions {
     }
 
     fun logistic(k: Double = 0.5) = object : TransferFunction(0.0, 1.0){
-        override fun transfer(value: Double) = 1 / (1 + Math.exp(-k * value))
+        override fun transfer(value: Double) = 1 / (1 + exp(-k * value))
     }
 
     fun tanh(k: Double = 0.5) = object : TransferFunction(-1.0, 1.0){
-        override fun transfer(value: Double) = Math.tanh(k * value)
+        override fun transfer(value: Double) = kotlin.math.tanh(k * value)
     }
 }
