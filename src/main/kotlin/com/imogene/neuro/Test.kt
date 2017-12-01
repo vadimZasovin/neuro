@@ -1,5 +1,6 @@
 package com.imogene.neuro
 
+import com.imogene.neuro.learning.GeneralizedHebbianAlgorithm
 import java.util.*
 
 fun main(args: Array<String>){
@@ -8,7 +9,7 @@ fun main(args: Array<String>){
     val tfSigmoid = TransferFunctions.logistic()
     val tfTan = TransferFunctions.tanh()
 
-    val net = NeuralNetwork("белый", "черный", "азиат") {
+    val net = NeuralNetwork {
         layer(20, afSum, tfEmpty)  // input layer
         layer(8, afSum, tfSigmoid) // first hidden layer
         layer {                        // second hidden layer
@@ -19,13 +20,22 @@ fun main(args: Array<String>){
         }
     }
 
-    net.initMemory()
-    net.initBiases()
+    val example = randomizedArray(20)
 
+    net.learn(GeneralizedHebbianAlgorithm()){
+        (0..50000).forEach { example(example) }
+    }
+
+    println()
+    println()
+
+    val answer = net.solve(example)
+    answer.forEach(::println)
+}
+
+private fun randomizedArray(size: Int) : DoubleArray {
     val random = Random()
-    val answer = net.solve(DoubleArray(20, { // input vector (size = 20 = input layer size)
+    return DoubleArray(size){
         random.nextDouble()
-    }))
-
-    answer.results.forEach { println(it.value + " " + it.probabilityPercent) }
+    }
 }

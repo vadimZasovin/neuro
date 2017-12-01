@@ -26,20 +26,23 @@ internal class MultiLayerNetImpl(layers: List<LayerStructure>) :
         return net
     }
 
-    override fun learn(rule: SupervisedLearningRule, manage: SupervisedLearningManager.() -> Unit) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun learn(rule: SupervisedLearningRule,
+                       manage: SupervisedLearningManager.() -> Unit) {
+
     }
 
-    override fun learn(rule: UnsupervisedLearningRule, manage: UnsupervisedLearningManager.() -> Unit) {
-        val manager = UnsupervisedLearningManager(rule, this)
-        manager.manage()
+    override fun learn(rule: UnsupervisedLearningRule,
+                       manage: UnsupervisedLearningManager.() -> Unit) {
+        UnsupervisedLearningManager(rule, this).manage()
     }
 
-    override fun learnTasks(rule: SupervisedLearningRule, manage: TaskSolverSupervisedLearningManager.() -> Unit) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun learnTasks(rule: SupervisedLearningRule,
+                            manage: TaskSolverSupervisedLearningManager.() -> Unit) {
+
     }
 
-    override fun learnTasks(rule: UnsupervisedLearningRule, manage: TaskSolverUnsupervisedLearningManager.() -> Unit) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun learnTasks(rule: UnsupervisedLearningRule,
+                            manage: TaskSolverUnsupervisedLearningManager.() -> Unit) {
+        TaskSolverUnsupervisedLearningManager(rule, this).manage()
     }
 }

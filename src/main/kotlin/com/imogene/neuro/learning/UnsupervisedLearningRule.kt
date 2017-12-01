@@ -1,11 +1,12 @@
 package com.imogene.neuro.learning
 
-import com.imogene.neuro.MultiLayerSplitStructure
-import com.imogene.neuro.MultiLayerStructure
+import com.imogene.neuro.Structure
 
 interface UnsupervisedLearningRule {
 
-    fun apply(structure: MultiLayerStructure, example: DoubleArray)
+    var learningRate : Double
 
-    fun apply(structure: MultiLayerSplitStructure, example: DoubleArray)
+    fun initialize(structure: Structure)
+
+    fun apply(example: DoubleArray) : Double
 }

@@ -1,30 +1,21 @@
 package com.imogene.neuro.learning
 
-import com.imogene.neuro.*
+import com.imogene.neuro.LayerStructure
 
-class GeneralizedHebbianAlgorithm : UnsupervisedLearningRule {
+class GeneralizedHebbianAlgorithm : HebbianRule() {
 
-    private var memoryInitialized = false
-
-    override fun apply(structure: MultiLayerStructure, example: DoubleArray) {
-        if(!memoryInitialized){
-            structure.initMemory()
-            structure.initBiases()
-            memoryInitialized = true
+    override fun getWeightDecay(layer: LayerStructure, position: Int,
+                                weightIndex: Int, inputs: DoubleArray,
+                                outputs: DoubleArray) : Double {
+        val output = outputs[position]
+        val neurons = layer.neurons
+        var sum = 0.0
+        for (k in 0..position){
+            val neuron = neurons[k]
+            val weights = neuron.memory
+            val weight = weights[weightIndex]
+            sum += weight * outputs[k]
         }
-
-        val inputLayer = structure.inputLayer
-        val normalized = inputLayer.signal(example)
-        
-        (1 until structure.layersCount)
-                .asSequence()
-                .map { structure[it] }
-                .forEach {
-
-                }
-    }
-
-    override fun apply(structure: MultiLayerSplitStructure, example: DoubleArray) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return output * sum
     }
 }

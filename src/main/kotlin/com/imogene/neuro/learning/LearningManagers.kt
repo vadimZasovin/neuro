@@ -1,8 +1,8 @@
 package com.imogene.neuro.learning
 
-import com.imogene.neuro.MultiLayerSplitStructure
-import com.imogene.neuro.MultiLayerStructure
-import com.imogene.neuro.inputLayer
+import com.imogene.neuro.*
+import com.imogene.neuro.impl.ClassificationNetImpl
+import com.imogene.neuro.impl.MultiLayerNetImpl
 
 open class SupervisedLearningManager {
 
@@ -38,60 +38,58 @@ open class TaskSolverSupervisedLearningManager : SupervisedLearningManager {
     internal constructor(rule: SupervisedLearningRule, structure: MultiLayerSplitStructure) : super(rule, structure)
 }
 
-open class UnsupervisedLearningManager {
+open class UnsupervisedLearningManager internal constructor(
+        private val rule: UnsupervisedLearningRule, structure: Structure) {
 
-    internal val rule : UnsupervisedLearningRule
-
-    internal lateinit var structure : MultiLayerStructure
-
-    internal lateinit var splitStructure : MultiLayerSplitStructure
-
-    internal constructor(rule: UnsupervisedLearningRule, structure: MultiLayerStructure){
-        this.rule = rule
-        this.structure = structure
+    private val inputLayerSize : Int = if(structure is MultiLayerStructure){
+        structure.inputLayer.size
+    }else{
+        (structure as MultiLayerSplitStructure)[0][0].size
     }
 
-    internal constructor(rule: UnsupervisedLearningRule, structure: MultiLayerSplitStructure){
-        this.rule = rule
-        splitStructure = structure
+    init {
+        rule.initialize(structure)
     }
+
+    private var _averageWeightsChange : Double = -1.0
+
+    val averageWeightsChange get() = _averageWeightsChange
 
     fun example(example: DoubleArray){
-        if(this::structure.isInitialized){
-            checkExampleSize(example)
-            rule.apply(structure, example)
-        }else{
-            checkExampleSizeForSplit(example)
-            rule.apply(structure, example)
+        if(example.size != inputLayerSize){
+            throw IllegalArgumentException(
+                    "The size of the specified " +
+                    "example array (${example.size}) " +
+                    "is not equal to size of the " +
+                    "input layer ($inputLayerSize).")
         }
-    }
-
-    private fun checkExampleSize(example: DoubleArray){
-        checkExampleSize(structure, example)
-    }
-
-    private fun checkExampleSize(structure: MultiLayerStructure, example: DoubleArray){
-        val exampleSize = example.size
-        val inputLayer = structure.inputLayer
-        val inputLayerSize = inputLayer.size
-        if(exampleSize != inputLayerSize){
-            throw IllegalArgumentException("The size of " +
-                    "the example array ($exampleSize) is " +
-                    "not equal to input layer size " +
-                    "($inputLayerSize)")
-        }
-    }
-
-    private fun checkExampleSizeForSplit(example: DoubleArray){
-        splitStructure.structures.forEach{
-            checkExampleSize(it, example)
-        }
+        _averageWeightsChange = rule.apply(example)
+        println(_averageWeightsChange)
     }
 }
 
-class TaskSolverUnsupervisedLearningManager : UnsupervisedLearningManager {
+class TaskSolverUnsupervisedLearningManager internal constructor(
+        rule: UnsupervisedLearningRule, structure: Structure) :
+        UnsupervisedLearningManager(rule, structure) {
 
-    internal constructor(rule: UnsupervisedLearningRule, structure: MultiLayerStructure) : super(rule, structure)
+    private val normalizers : Map<MutableRange, Normalizer<*>>?
 
-    internal constructor(rule: UnsupervisedLearningRule, structure: MultiLayerSplitStructure) : super(rule, structure)
+    private val nominalVariables : Map<Int, NominalVariable<*>>?
+
+    init {
+        if(structure is MultiLayerNetImpl){
+            normalizers = structure.normalizers
+            nominalVariables = structure.nominalVariables
+        }else{
+            structure as ClassificationNetImpl<*>
+            normalizers = structure.normalizers
+            nominalVariables = structure.nominalVariables
+        }
+    }
+
+    fun example(build: TaskBuilder.() -> Unit){
+        val builder = TaskBuilder(normalizers, nominalVariables)
+        builder.build()
+        example(builder.inputs)
+    }
 }
