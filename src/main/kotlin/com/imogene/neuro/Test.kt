@@ -6,24 +6,21 @@ import java.util.*
 fun main(args: Array<String>){
     val afSum = AggregationFunctions.sum()
     val tfEmpty = TransferFunctions.empty()
+    val tfLinear = TransferFunctions.linear(1.0)
     val tfSigmoid = TransferFunctions.logistic()
-    val tfTan = TransferFunctions.tanh()
 
     val net = NeuralNetwork {
-        layer(20, afSum, tfEmpty)  // input layer
-        layer(8, afSum, tfSigmoid) // first hidden layer
-        layer {                        // second hidden layer
-            neuron(afSum, tfSigmoid)
-            neuron(afSum, tfTan)
-            neuron(afSum, tfSigmoid)
-            neuron(afSum, tfTan)
-        }
+        layer(4, afSum, tfEmpty)  // input layer
+        layer(6, afSum, tfLinear)  // first hidden layer
+        layer(4, afSum, tfSigmoid) // output layer
     }
 
-    val example = randomizedArray(20)
+    val example = randomizedArray(4)
 
     net.learn(GeneralizedHebbianAlgorithm()){
-        (0..50000).forEach { example(example) }
+        (0..100000).forEach { example(example) }
+        val newExample = randomizedArray(4)
+        (0..100000).forEach { example(newExample) }
     }
 
     println()
