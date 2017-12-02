@@ -44,7 +44,11 @@ internal class MultiLayerNetImpl(layers: List<LayerStructure>) :
 
     override fun learn(rule: UnsupervisedLearningRule,
                        manage: TaskSolverUnsupervisedLearningManager.() -> Unit) : MultiLayerTaskSolverNet {
-        TaskSolverUnsupervisedLearningManager(rule, this).manage()
+        TaskSolverUnsupervisedLearningManager(
+                rule,
+                this,
+                normalizers,
+                nominalVariables).manage()
         return this
     }
 }

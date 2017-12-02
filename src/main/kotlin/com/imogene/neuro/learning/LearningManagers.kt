@@ -69,23 +69,10 @@ open class UnsupervisedLearningManager internal constructor(
 }
 
 class TaskSolverUnsupervisedLearningManager internal constructor(
-        rule: UnsupervisedLearningRule, structure: Structure) :
+        rule: UnsupervisedLearningRule, structure: Structure,
+        private val normalizers : Map<MutableRange, Normalizer<*>>?,
+        private val nominalVariables : Map<Int, NominalVariable<*>>?) :
         UnsupervisedLearningManager(rule, structure) {
-
-    private val normalizers : Map<MutableRange, Normalizer<*>>?
-
-    private val nominalVariables : Map<Int, NominalVariable<*>>?
-
-    init {
-        if(structure is MultiLayerNetImpl){
-            normalizers = structure.normalizers
-            nominalVariables = structure.nominalVariables
-        }else{
-            structure as ClassificationNetImpl<*>
-            normalizers = structure.normalizers
-            nominalVariables = structure.nominalVariables
-        }
-    }
 
     fun example(build: TaskBuilder.() -> Unit){
         val builder = TaskBuilder(normalizers, nominalVariables)
