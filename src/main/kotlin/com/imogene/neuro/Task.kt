@@ -40,8 +40,9 @@ class TaskTemplateBuilder internal constructor(){
         neuronsCounter += size
     }
 
-    internal fun build(transferFunction: TransferFunction) : TaskTemplate{
+    internal fun build() : TaskTemplate{
         val aggregationFunction = AggregationFunctions.sum()
+        val transferFunction = TransferFunctions.empty()
         val inputNeurons = initList(neuronsCounter) {
             Neuron(aggregationFunction, transferFunction, 1, { 1.0 })
         }
@@ -50,10 +51,10 @@ class TaskTemplateBuilder internal constructor(){
 }
 
 @Suppress("FunctionName")
-fun TaskTemplate(build: TaskTemplateBuilder.() -> Unit) : TaskTemplate {
+fun TaskTemplate(buildTemplate: TaskTemplateBuilder.() -> Unit) : TaskTemplate {
     val builder = TaskTemplateBuilder()
-    builder.build()
-    return builder.build(TransferFunctions.empty())
+    builder.buildTemplate()
+    return builder.build()
 }
 
 class TaskBuilder internal constructor(
