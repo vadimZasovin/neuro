@@ -9,15 +9,14 @@ fun main(args: Array<String>){
     val tfLinear = TransferFunctions.linear(1.0)
     val tfSigmoid = TransferFunctions.logistic()
 
+    val rule = GeneralizedHebbianAlgorithm()
+    val example = randomizedArray(4)
+
     val net = NeuralNetwork {
         layer(4, afSum, tfEmpty)  // input layer
         layer(6, afSum, tfLinear)  // first hidden layer
         layer(4, afSum, tfSigmoid) // output layer
-    }
-
-    val example = randomizedArray(4)
-
-    net.learn(GeneralizedHebbianAlgorithm()){
+    }.learn(rule){
         (0..100000).forEach { example(example) }
         val newExample = randomizedArray(4)
         (0..100000).forEach { example(newExample) }

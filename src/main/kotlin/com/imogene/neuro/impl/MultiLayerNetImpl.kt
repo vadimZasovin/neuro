@@ -27,22 +27,24 @@ internal class MultiLayerNetImpl(layers: List<LayerStructure>) :
     }
 
     override fun learn(rule: SupervisedLearningRule,
-                       manage: SupervisedLearningManager.() -> Unit) {
-
+                       manage: SupervisedLearningManager.() -> Unit) : MultiLayerNet {
+        return this
     }
 
     override fun learn(rule: UnsupervisedLearningRule,
-                       manage: UnsupervisedLearningManager.() -> Unit) {
+                       manage: UnsupervisedLearningManager.() -> Unit) : MultiLayerNet {
         UnsupervisedLearningManager(rule, this).manage()
+        return this
     }
 
-    override fun learnTasks(rule: SupervisedLearningRule,
-                            manage: TaskSolverSupervisedLearningManager.() -> Unit) {
-
+    override fun learn(rule: SupervisedLearningRule,
+                            manage: TaskSolverSupervisedLearningManager.() -> Unit) : MultiLayerTaskSolverNet {
+        return this
     }
 
-    override fun learnTasks(rule: UnsupervisedLearningRule,
-                            manage: TaskSolverUnsupervisedLearningManager.() -> Unit) {
+    override fun learn(rule: UnsupervisedLearningRule,
+                       manage: TaskSolverUnsupervisedLearningManager.() -> Unit) : MultiLayerTaskSolverNet {
         TaskSolverUnsupervisedLearningManager(rule, this).manage()
+        return this
     }
 }
