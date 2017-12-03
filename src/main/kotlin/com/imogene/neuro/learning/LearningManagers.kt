@@ -64,7 +64,6 @@ open class UnsupervisedLearningManager internal constructor(
                     "input layer ($inputLayerSize).")
         }
         _averageWeightsChange = rule.apply(example)
-        println(_averageWeightsChange)
     }
 }
 
