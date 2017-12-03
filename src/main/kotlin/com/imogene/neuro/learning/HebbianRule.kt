@@ -72,22 +72,31 @@ abstract class HebbianRule : UnsupervisedLearningRule {
         // weights decay
         val outputs = layer.signal(inputs)
         val neurons = layer.neurons
-        neurons.forEachIndexed { i, neuron ->
-            val weights = neuron.memory
-            // neuron index is the index of
-            // it's output signal in the
-            // outputs array
-            val output = outputs[i]
-            weights.forEachIndexed { j, weight ->
-                val decay = getWeightDecay(layer, i, j, inputs, outputs)
-                val input = inputs[j]
-                val delta = learningRate * (output * input - decay)
-                weights[j] = weight + delta
+        // we loop through neurons in reversed
+        // order to ensure that the
+        // GeneralizedHebbianAlgorithm
+        // implementation work properly
+        // since it's decay value is calculated
+        // based on previous neurons. Hence it's
+        // weights must not be changed yet.
+        (neurons.size - 1 downTo 0)
+                .forEach {
+                    val neuron = neurons[it]
+                    val weights = neuron.memory
+                    // neuron index is the index of
+                    // it's output signal in the
+                    // outputs array
+                    val output = outputs[it]
+                    weights.forEachIndexed { j, weight ->
+                        val decay = getWeightDecay(layer, it, j, inputs, outputs)
+                        val input = inputs[j]
+                        val delta = learningRate * (output * input - decay)
+                        weights[j] = weight + delta
 
-                // update change value
-                weightsChange += abs(delta)
-            }
-        }
+                        // update change value
+                        weightsChange += abs(delta)
+                    }
+                }
         return outputs
     }
 

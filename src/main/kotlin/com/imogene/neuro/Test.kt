@@ -17,9 +17,10 @@ fun main(args: Array<String>){
         layer(6, afSum, tfLinear)  // first hidden layer
         layer(4, afSum, tfSigmoid) // output layer
     }.learn(rule){
-        (0..100000).forEach { example(example) }
-        val newExample = randomizedArray(4)
-        (0..100000).forEach { example(newExample) }
+        (0..100000).forEach {
+            example(example)
+            println(averageWeightsChange)
+        }
     }
 
     println()
