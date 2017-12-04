@@ -42,6 +42,14 @@ open class UnsupervisedLearningManager internal constructor(
     private val inputLayerSize : Int = if(structure is MultiLayerStructure){
         structure.inputLayer.size
     }else{
+        // here we assume that all the structures in the
+        // split structure have the same configuration
+        // (i.e. the same number of layers and neurons)
+        // because an split structure can be created only
+        // by calling split() method on a regular net and
+        // the implementation of the split() method in
+        // built in structures an networks guarantees
+        // the identical configuration for it's structures.
         (structure as MultiLayerSplitStructure)[0][0].size
     }
 
@@ -68,6 +76,10 @@ open class UnsupervisedLearningManager internal constructor(
                     "input layer ($inputLayerSize).")
         }
         _averageWeightsChange = rule.apply(example)
+    }
+
+    fun examples(examples: List<DoubleArray>){
+        examples.forEach { example(it) }
     }
 }
 
