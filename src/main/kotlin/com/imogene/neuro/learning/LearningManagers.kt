@@ -67,6 +67,27 @@ open class UnsupervisedLearningManager internal constructor(
             rule.learningRate = value
         }
 
+    /**
+     * This property is used to control whether the specified
+     * examples should be stored in the internal temporal list
+     * and then mixed and used as a new learning epoch via
+     * [newEpoch] method.
+     *
+     * Disabling this will also clear all the examples, that were
+     * specified previously.
+     *
+     * Epochs are enabled by default.
+     */
+    var epochsEnabled = true
+        set(value) {
+            if(!value){
+                resetEpoch()
+            }
+            field = value
+        }
+
+    private lateinit var epochExamples: MutableList<DoubleArray>
+
     fun example(example: DoubleArray){
         if(example.size != inputLayerSize){
             throw IllegalArgumentException(
@@ -75,11 +96,55 @@ open class UnsupervisedLearningManager internal constructor(
                     "is not equal to size of the " +
                     "input layer ($inputLayerSize).")
         }
+
+        if(epochsEnabled){
+            ensureEpochExamples()
+            epochExamples.add(example)
+        }
+
         _averageWeightsChange = rule.apply(example)
     }
 
+    private fun ensureEpochExamples(){
+        if(!this::epochExamples.isInitialized){
+            epochExamples = mutableListOf()
+        }
+    }
+
     fun examples(examples: List<DoubleArray>){
+        val epochsEnabled = this.epochsEnabled
+        if(epochsEnabled){
+            ensureEpochExamples()
+            epochExamples.addAll(examples)
+            this.epochsEnabled = false
+        }
         examples.forEach { example(it) }
+        this.epochsEnabled = epochsEnabled
+    }
+
+    fun newEpoch(){
+        if(!epochsEnabled){
+            throw IllegalStateException(
+                    "Epochs are not enabled " +
+                    "for this learning manager.")
+        }
+        if(this::epochExamples.isInitialized){
+            if(epochExamples.isNotEmpty()){
+                epochExamples.shuffle()
+                epochsEnabled = false
+                examples(epochExamples)
+                epochsEnabled = true
+            }
+        }else{
+            throw IllegalStateException(
+                    "Epoch examples are not specified.")
+        }
+    }
+
+    fun resetEpoch(){
+        if(this::epochExamples.isInitialized){
+            epochExamples.clear()
+        }
     }
 }
 

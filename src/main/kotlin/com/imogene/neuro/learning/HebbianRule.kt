@@ -75,7 +75,7 @@ abstract class HebbianRule : UnsupervisedLearningRule {
         // we loop through neurons in reversed
         // order to ensure that the
         // GeneralizedHebbianAlgorithm and other
-        // implementation work properly
+        // implementations work properly
         // since it's decay value is calculated
         // based on previous neurons. Hence it's
         // weights must not be changed yet.

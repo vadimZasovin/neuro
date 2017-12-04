@@ -19,7 +19,7 @@ fun main(args: Array<String>){
 
     val manager = net.learn(rule)
     with(manager){
-        (0..10000).forEach {
+        (0..1000).forEach {
             example {
                 variable(200)
                 variable(15)
@@ -27,6 +27,9 @@ fun main(args: Array<String>){
                 variable(13)
             }
         }
+        println(averageWeightsChange)
+        newEpoch()
+        println(averageWeightsChange)
     }
 
     println()
