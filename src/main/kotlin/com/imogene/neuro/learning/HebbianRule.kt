@@ -5,7 +5,7 @@ import kotlin.math.abs
 
 abstract class HebbianRule : UnsupervisedLearningRule {
 
-    override var learningRate: Double = 0.03
+    override var learningRate : Double = 0.03
 
     private lateinit var structure : MultiLayerStructure
 
