@@ -1,6 +1,6 @@
 package com.imogene.neuro
 
-import com.imogene.neuro.learning.GeneralizedHebbianAlgorithm
+import com.imogene.neuro.learning.OjaSubspaceAlgorithm
 import java.util.*
 
 fun main(args: Array<String>){
@@ -9,7 +9,7 @@ fun main(args: Array<String>){
     val tfLinear = TransferFunctions.linear(1.0)
     val tfSigmoid = TransferFunctions.logistic()
 
-    val rule = GeneralizedHebbianAlgorithm()
+    val rule = OjaSubspaceAlgorithm()
     val example = randomizedArray(4)
 
     val net = NeuralNetwork {
@@ -17,7 +17,7 @@ fun main(args: Array<String>){
         layer(6, afSum, tfLinear)  // first hidden layer
         layer(4, afSum, tfSigmoid) // output layer
     }.learn(rule){
-        (0..100000).forEach {
+        (0..10000).forEach {
             example(example)
             println(averageWeightsChange)
         }
