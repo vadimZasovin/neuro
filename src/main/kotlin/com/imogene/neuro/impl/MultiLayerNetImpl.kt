@@ -1,7 +1,9 @@
 package com.imogene.neuro.impl
 
 import com.imogene.neuro.*
-import com.imogene.neuro.learning.*
+import com.imogene.neuro.learning.SupervisedLearningRule
+import com.imogene.neuro.learning.TaskSolverUnsupervisedLearningManager
+import com.imogene.neuro.learning.UnsupervisedLearningRule
 
 internal class MultiLayerNetImpl(layers: List<LayerStructure>) :
         MultiLayerStructureImpl(layers), MultiLayerTaskSolverNet{
@@ -26,29 +28,8 @@ internal class MultiLayerNetImpl(layers: List<LayerStructure>) :
         return net
     }
 
-    override fun learn(rule: SupervisedLearningRule,
-                       manage: SupervisedLearningManager.() -> Unit) : MultiLayerNet {
-        return this
-    }
+    override fun learn(rule: SupervisedLearningRule) = throw RuntimeException()
 
-    override fun learn(rule: UnsupervisedLearningRule,
-                       manage: UnsupervisedLearningManager.() -> Unit) : MultiLayerNet {
-        UnsupervisedLearningManager(rule, this).manage()
-        return this
-    }
-
-    override fun learn(rule: SupervisedLearningRule,
-                            manage: TaskSolverSupervisedLearningManager.() -> Unit) : MultiLayerTaskSolverNet {
-        return this
-    }
-
-    override fun learn(rule: UnsupervisedLearningRule,
-                       manage: TaskSolverUnsupervisedLearningManager.() -> Unit) : MultiLayerTaskSolverNet {
-        TaskSolverUnsupervisedLearningManager(
-                rule,
-                this,
-                normalizers,
-                nominalVariables).manage()
-        return this
-    }
+    override fun learn(rule: UnsupervisedLearningRule) =
+            TaskSolverUnsupervisedLearningManager(rule, this, normalizers, nominalVariables)
 }

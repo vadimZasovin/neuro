@@ -5,28 +5,52 @@ import java.util.*
 
 fun main(args: Array<String>){
     val afSum = AggregationFunctions.sum()
-    val tfEmpty = TransferFunctions.empty()
     val tfLinear = TransferFunctions.linear(1.0)
-    val tfSigmoid = TransferFunctions.logistic()
 
     val rule = OjaSubspaceAlgorithm()
-    val example = randomizedArray(4)
+    val taskTemplate = TaskTemplate {
+        variables(4)
+    }
 
-    val net = NeuralNetwork {
-        layer(4, afSum, tfEmpty)  // input layer
-        layer(6, afSum, tfLinear)  // first hidden layer
-        layer(4, afSum, tfSigmoid) // output layer
-    }.learn(rule){
+    val net = NeuralNetwork(taskTemplate) {
+        layer(6, afSum, tfLinear)  // hidden layer
+        layer(4, afSum, tfLinear)  // output layer
+    }
+
+    val manager = net.learn(rule)
+    with(manager){
         (0..10000).forEach {
-            example(example)
-            println(averageWeightsChange)
+            example {
+                variable(200)
+                variable(15)
+                variable(0.99)
+                variable(13)
+            }
         }
     }
 
     println()
     println()
 
-    val answer = net.solve(example)
+    var answer = net.solve {
+        variable(190)
+        variable(10)
+        variable(1.0)
+        variable(13)
+
+    }
+    answer.forEach(::println)
+
+    println()
+    println()
+
+    answer = net.solve {
+        variable(300)
+        variable(5)
+        variable(0.56)
+        variable(18)
+
+    }
     answer.forEach(::println)
 }
 

@@ -1,8 +1,6 @@
 package com.imogene.neuro.learning
 
 import com.imogene.neuro.*
-import com.imogene.neuro.impl.ClassificationNetImpl
-import com.imogene.neuro.impl.MultiLayerNetImpl
 
 open class SupervisedLearningManager {
 

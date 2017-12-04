@@ -8,11 +8,9 @@ interface MultiLayerNet : MultiLayerStructure {
 
     override fun split() : MultiLayerSplitNet
 
-    fun learn(rule: SupervisedLearningRule,
-              manage: SupervisedLearningManager.() -> Unit): MultiLayerNet
+    fun learn(rule: SupervisedLearningRule) : SupervisedLearningManager
 
-    fun learn(rule: UnsupervisedLearningRule,
-              manage: UnsupervisedLearningManager.() -> Unit) : MultiLayerNet
+    fun learn(rule: UnsupervisedLearningRule) : UnsupervisedLearningManager
 }
 
 interface MultiLayerTaskSolverNet : MultiLayerNet {
@@ -21,11 +19,9 @@ interface MultiLayerTaskSolverNet : MultiLayerNet {
 
     override fun split() : MultiLayerSplitTaskSolverNet
 
-    fun learn(rule: SupervisedLearningRule,
-              manage: TaskSolverSupervisedLearningManager.() -> Unit) : MultiLayerTaskSolverNet
+    override fun learn(rule: SupervisedLearningRule) : TaskSolverSupervisedLearningManager
 
-    fun learn(rule: UnsupervisedLearningRule,
-              manage: TaskSolverUnsupervisedLearningManager.() -> Unit) : MultiLayerTaskSolverNet
+    override fun learn(rule: UnsupervisedLearningRule) : TaskSolverUnsupervisedLearningManager
 }
 
 interface MultiLayerSplitNet : MultiLayerSplitStructure {
