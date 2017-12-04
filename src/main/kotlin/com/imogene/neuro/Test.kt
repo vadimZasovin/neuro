@@ -1,25 +1,25 @@
 package com.imogene.neuro
 
-import com.imogene.neuro.learning.OjaSubspaceAlgorithm
+import com.imogene.neuro.learning.GeneralizedHebbianAlgorithm
 import java.util.*
 
 fun main(args: Array<String>){
     val afSum = AggregationFunctions.sum()
-    val tfLinear = TransferFunctions.linear(1.0)
+    val tfSigmoid = TransferFunctions.logistic()
 
-    val rule = OjaSubspaceAlgorithm()
+    val rule = GeneralizedHebbianAlgorithm()
     val taskTemplate = TaskTemplate {
         variables(4)
     }
 
     val net = NeuralNetwork(taskTemplate) {
-        layer(6, afSum, tfLinear)  // hidden layer
-        layer(4, afSum, tfLinear)  // output layer
+        layer(6, afSum, tfSigmoid)  // hidden layer
+        layer(4, afSum, tfSigmoid)  // output layer
     }
 
     val manager = net.learn(rule)
     with(manager){
-        (0..1000).forEach {
+        (0..100).forEach {
             example {
                 variable(200)
                 variable(15)
