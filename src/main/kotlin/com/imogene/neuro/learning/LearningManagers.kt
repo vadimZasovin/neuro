@@ -53,7 +53,11 @@ open class UnsupervisedLearningManager internal constructor(
 
     val averageWeightsChange get() = _averageWeightsChange
 
-    var learningRate by CustomDelegates.property(rule::learningRate)
+    var learningRate
+        get() = rule.learningRate
+        set(value){
+            rule.learningRate = value
+        }
 
     fun example(example: DoubleArray){
         if(example.size != inputLayerSize){
