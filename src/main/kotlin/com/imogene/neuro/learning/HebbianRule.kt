@@ -74,7 +74,7 @@ abstract class HebbianRule : UnsupervisedLearningRule {
         val neurons = layer.neurons
         // we loop through neurons in reversed
         // order to ensure that the
-        // GeneralizedHebbianAlgorithm
+        // GeneralizedHebbianAlgorithm and other
         // implementation work properly
         // since it's decay value is calculated
         // based on previous neurons. Hence it's
