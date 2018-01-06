@@ -69,26 +69,41 @@ open class UnsupervisedLearningManager internal constructor(
 
     /**
      * This property is used to control whether the specified
-     * examples should be stored in the internal temporal list
-     * and then mixed and used as a new learning epoch via
-     * [newEpoch] method.
+     * examples (via [example] and [examples] methods) should
+     * be stored in the internal temporal list. This examples
+     * then can be used as a new learning epoch via [repeat]
+     * method.
      *
-     * Disabling this will also clear all the examples, that were
-     * specified previously.
+     * Disabling this will also clear all the examples, that
+     * were specified previously.
      *
-     * Epochs are enabled by default.
+     * Accumulation is enabled by default.
      */
-    var epochsEnabled = true
+    var isAccumulationEnabled = true
         set(value) {
-            if(!value){
-                resetEpoch()
+            if(!value && field){
+                resetAccumulation()
             }
             field = value
         }
 
-    private lateinit var epochExamples: MutableList<DoubleArray>
+    /*
+    Used internally to accumulate examples specified with
+    example() and examples() methods. This works if
+    isAccumulationEnabled property is set to true.
+     */
+    private lateinit var _examples: MutableList<DoubleArray>
 
     fun example(example: DoubleArray){
+        checkSize(example)
+        if(isAccumulationEnabled){
+            ensureExamples()
+            _examples.add(example)
+        }
+        _averageWeightsChange = rule.apply(example)
+    }
+
+    private fun checkSize(example: DoubleArray){
         if(example.size != inputLayerSize){
             throw IllegalArgumentException(
                     "The size of the specified " +
@@ -96,44 +111,35 @@ open class UnsupervisedLearningManager internal constructor(
                     "is not equal to size of the " +
                     "input layer ($inputLayerSize).")
         }
-
-        if(epochsEnabled){
-            ensureEpochExamples()
-            epochExamples.add(example)
-        }
-
-        _averageWeightsChange = rule.apply(example)
     }
 
-    private fun ensureEpochExamples(){
-        if(!this::epochExamples.isInitialized){
-            epochExamples = mutableListOf()
+    private fun ensureExamples(){
+        if(!this::_examples.isInitialized){
+            _examples = mutableListOf()
         }
     }
 
     fun examples(examples: List<DoubleArray>){
-        val epochsEnabled = this.epochsEnabled
-        if(epochsEnabled){
-            ensureEpochExamples()
-            epochExamples.addAll(examples)
-            this.epochsEnabled = false
+        if(isAccumulationEnabled){
+            ensureExamples()
+            _examples.addAll(examples)
         }
-        examples.forEach { example(it) }
-        this.epochsEnabled = epochsEnabled
+        examples.forEach {
+            checkSize(it)
+            _averageWeightsChange = rule.apply(it)
+        }
     }
 
-    fun newEpoch(){
-        if(!epochsEnabled){
+    fun repeat(){
+        if(!isAccumulationEnabled){
             throw IllegalStateException(
                     "Epochs are not enabled " +
                     "for this learning manager.")
         }
-        if(this::epochExamples.isInitialized){
-            if(epochExamples.isNotEmpty()){
-                epochExamples.shuffle()
-                epochsEnabled = false
-                examples(epochExamples)
-                epochsEnabled = true
+        if(this::_examples.isInitialized){
+            if(_examples.isNotEmpty()){
+                _examples.shuffle()
+                examples(_examples)
             }
         }else{
             throw IllegalStateException(
@@ -141,9 +147,9 @@ open class UnsupervisedLearningManager internal constructor(
         }
     }
 
-    fun resetEpoch(){
-        if(this::epochExamples.isInitialized){
-            epochExamples.clear()
+    fun resetAccumulation(){
+        if(this::_examples.isInitialized){
+            _examples.clear()
         }
     }
 }

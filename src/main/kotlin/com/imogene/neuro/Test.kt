@@ -28,7 +28,7 @@ fun main(args: Array<String>){
             }
         }
         println(averageWeightsChange)
-        newEpoch()
+        repeat()
         println(averageWeightsChange)
     }
 
