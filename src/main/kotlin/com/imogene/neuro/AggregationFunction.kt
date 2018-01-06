@@ -2,5 +2,5 @@ package com.imogene.neuro
 
 interface AggregationFunction {
 
-    fun aggregate(inputs: DoubleArray, memory: NeuronMemory, bias: Double) : Double
+    fun aggregate(inputs: DoubleArray, memory: NeuronMemory, bias: Bias) : Double
 }
